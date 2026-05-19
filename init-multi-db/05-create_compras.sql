@@ -3,7 +3,7 @@
 -- =========================================
 
 -- Conectarse a la base de datos específica
-\c compras; -- [1]
+\c compras; 
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar conflictos de FK)
 DROP TABLE IF EXISTS proy_boletos; 
