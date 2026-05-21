@@ -8,21 +8,17 @@ import org.springframework.stereotype.Service;
 import cl.triskeledu.artistas.client.CatalogoClient;
 import cl.triskeledu.artistas.dto.ArtistaRequest;
 import cl.triskeledu.artistas.dto.ArtistaResponse;
+// Descomenta estas importaciones cuando implementes la mensajería asíncrona
+// import cl.triskeledu.artistas.event.ArtistaEventProducer;
+// import cl.triskeledu.common.event.ArtistaCreatedEvent;
+// import cl.triskeledu.common.event.ArtistaDeletedEvent;
+// import cl.triskeledu.common.event.ArtistaUpdatedEvent;
 import cl.triskeledu.common.exception.*;
 import cl.triskeledu.artistas.mapper.ArtistaMapper;
 import cl.triskeledu.artistas.model.Album;
 import cl.triskeledu.artistas.model.Artista;
 import cl.triskeledu.artistas.repository.AlbumRepository;
 import cl.triskeledu.artistas.repository.ArtistaRepository;
-import jakarta.persistence.EntityNotFoundException;
-
-
-// Descomenta estas importaciones cuando implementes la mensajería asíncrona
-// import cl.triskeledu.artistas.event.ArtistaEventProducer;
-// import cl.triskeledu.common.event.ArtistaCreatedEvent;
-// import cl.triskeledu.common.event.ArtistaDeletedEvent;
-// import cl.triskeledu.common.event.ArtistaUpdatedEvent;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
