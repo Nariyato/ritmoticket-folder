@@ -1,5 +1,5 @@
 -- =========================================
--- 06-notificaciones.sql
+-- 05-notificaciones.sql
 -- =========================================
 
 \c notificaciones

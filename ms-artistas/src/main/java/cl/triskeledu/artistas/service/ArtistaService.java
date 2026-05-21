@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import cl.triskeledu.artistas.client.CatalogoClient;
 import cl.triskeledu.artistas.dto.ArtistaRequest;
 import cl.triskeledu.artistas.dto.ArtistaResponse;
 import cl.triskeledu.common.exception.*;
@@ -13,6 +14,7 @@ import cl.triskeledu.artistas.model.Album;
 import cl.triskeledu.artistas.model.Artista;
 import cl.triskeledu.artistas.repository.AlbumRepository;
 import cl.triskeledu.artistas.repository.ArtistaRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 // Descomenta estas importaciones cuando implementes la mensajería asíncrona
 // import cl.triskeledu.artistas.event.ArtistaEventProducer;
@@ -38,6 +40,9 @@ public class ArtistaService {
     private final ArtistaRepository artistaRepository;
     private final AlbumRepository albumRepository;
     private final ArtistaMapper artistaMapper;
+
+    // Agrega esta línea para inyectar el Feign Client
+    private final CatalogoClient catalogoClient;
     
     // Descomentar cuando tengas el productor de eventos configurado
     // private final ArtistaEventProducer artistaEventProducer;
@@ -121,7 +126,7 @@ public class ArtistaService {
         Artista artista = getArtistaById(id);
         List<String> tablasAsociadas = new ArrayList<>();
         
-        // Validamos la integridad referencial local
+        // 1. Validaciones locales (integridad referencial de la propia base de datos)
         if (artista.getAlbums() != null && !artista.getAlbums().isEmpty()) {
             tablasAsociadas.add("Álbumes");
         }
@@ -129,11 +134,19 @@ public class ArtistaService {
             tablasAsociadas.add("Eventos Programados");
         }
         
+        // 2. NUEVA VALIDACIÓN EXTERNA (llamada al otro microservicio vía Feign)
+        if (catalogoClient.existsByArtistaId(artista.getIdArtista())) {
+            tablasAsociadas.add("Catálogo General de Eventos");
+        }
+        
+        // 3. Si hay dependencias (locales o externas), se lanza la excepción
         if (!tablasAsociadas.isEmpty()) {
             throw new ReferentialIntegrityException("Artistas", id.longValue(), String.join(", ", tablasAsociadas));
         }
         
+        // Si pasa todas las validaciones, se elimina el artista
         artistaRepository.delete(artista);
+    
         
         // Descomentar cuando tengas la mensajería
         // ArtistaDeletedEvent event = new ArtistaDeletedEvent(artista.getNombreArtistico());

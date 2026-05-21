@@ -1,5 +1,5 @@
 -- =========================================
--- 09-recintos.sql
+-- 08-recintos.sql
 -- =========================================
 
 -- Conectarse a la base de datos específica para este microservicio

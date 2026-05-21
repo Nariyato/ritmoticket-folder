@@ -1,5 +1,5 @@
 -- =========================================
--- 07-pagos.sql
+-- 06-pagos.sql
 -- =========================================
 
 -- Conectarse a la base de datos específica para este microservicio

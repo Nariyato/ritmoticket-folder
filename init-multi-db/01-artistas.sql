@@ -1,5 +1,5 @@
 -- =========================================
--- 02-artistas.sql
+-- 01-artistas.sql
 -- =========================================
 
 -- Conectarse a la base de datos específica

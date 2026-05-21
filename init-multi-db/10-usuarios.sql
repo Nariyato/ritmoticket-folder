@@ -1,5 +1,5 @@
 -- =========================================
--- 11-usuarios.sql
+-- 10-usuarios.sql
 -- =========================================
 
 -- Conectarse a la base de datos específica para este microservicio

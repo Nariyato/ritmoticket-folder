@@ -1,5 +1,5 @@
 -- =========================================
--- 03-boletos.sql
+-- 02-boletos.sql
 -- =========================================
 
 -- Conectarse a la base de datos específica

@@ -1,5 +1,5 @@
 -- =========================================
--- 08-precios.sql
+-- 07-precios.sql
 -- =========================================
 
 -- Conectarse a la base de datos específica para este microservicio

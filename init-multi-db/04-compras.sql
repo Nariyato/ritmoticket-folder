@@ -1,5 +1,5 @@
 -- =========================================
--- 05-compras.sql
+-- 04-compras.sql
 -- =========================================
 
 -- Conectarse a la base de datos específica
