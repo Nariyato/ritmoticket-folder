@@ -10,25 +10,23 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Direccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_direccion", nullable = false)
-    @EqualsAndHashCode.Include
+    @Column(name = "id_direccion")
     private Integer idDireccion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "ciudad", nullable = true, length = 50)
+    @Column(name = "ciudad", length = 50)
     private String ciudad;
 
-    @Column(name = "calle", nullable = true, length = 100)
+    @Column(name = "calle", length = 100)
     private String calle;
 
-    @Column(name = "numero", nullable = true)
+    @Column(name = "numero")
     private Integer numero;
 }
