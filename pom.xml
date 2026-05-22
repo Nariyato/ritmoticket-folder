@@ -16,17 +16,18 @@
     Cada uno es un subproyecto independiente (microservicio o libreria comun).
     -->
     <modules>
-        <module>eureka</module>      <!-- Servidor Eureka -->
-        <module>ms-artistas</module>      <!-- Microservicio artistas -->
-        <module>ms-boletos</module>      <!-- Microservicio boletos -->
-        <module>ms-catalogo</module>      <!-- Microservicio catalogo -->
-        <module>ms-compras</module>      <!-- Microservicio compras -->
-        <module>ms-notificaciones</module>      <!-- Microservicio notificaciones -->
-        <module>ms-pagos</module>      <!-- Microservicio pagos -->
-        <module>ms-precios</module>      <!-- Microservicio precios -->
-        <module>ms-recintos</module>      <!-- Microservicio recintos -->
-        <module>ms-reportes</module>      <!-- Microservicio reportes -->
-        <module>ms-usuarios</module>      <!-- Microservicio usuarios -->
+        <module>common</module>             <!-- Libreria comun compartida por todos los microservicios -->
+        <module>eureka</module>             <!-- Servidor Eureka -->
+        <module>ms-artistas</module>        <!-- Microservicio artistas -->
+        <module>ms-boletos</module>         <!-- Microservicio boletos -->
+        <module>ms-catalogo</module>        <!-- Microservicio catalogo -->
+        <module>ms-compras</module>         <!-- Microservicio compras -->
+        <module>ms-notificaciones</module>  <!-- Microservicio notificaciones -->
+        <module>ms-pagos</module>           <!-- Microservicio pagos -->
+        <module>ms-precios</module>         <!-- Microservicio precios -->
+        <module>ms-recintos</module>        <!-- Microservicio recintos -->
+        <module>ms-reportes</module>        <!-- Microservicio reportes -->
+        <module>ms-usuarios</module>        <!-- Microservicio usuarios -->
         <!-- CGV: Agrega aqui mas modulos segun sea necesario -->
     </modules>
 
