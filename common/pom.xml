@@ -16,7 +16,7 @@
     <!-- Herencia del proyecto padre que centraliza configuracion, BOM y versiones -->
     <parent>
         <groupId>cl.triskeledu</groupId>
-        <artifactId>biblioteca</artifactId>
+        <artifactId>ritmoticket</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
