@@ -66,6 +66,9 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
+        <cl-triskeledu-common.version>0.0.1-SNAPSHOT</cl-triskeledu-common.version>
+        <spring-kafka.version>3.3.5</spring-kafka.version>
+        <spring-boot-actuator.version>3.5.14</spring-boot-actuator.version>
     </properties>
 
     <dependencyManagement>
@@ -133,6 +136,25 @@
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.el</artifactId>
                 <version>${jakarta.el.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cl.triskeledu</groupId>
+                <artifactId>cl-triskeledu-common</artifactId>
+                <version>${cl-triskeledu-common.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring-kafka.version}</version>
+            </dependency>
+
+            <!-- Spring Boot Actuator: endpoints de monitoreo y salud -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
 
         </dependencies>
@@ -204,6 +226,17 @@
             </plugin>
 
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.jks</exclude>
+                    <exclude>**/*.p12</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
 
 </project>
