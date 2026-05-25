@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GeneroRepository extends JpaRepository<Genero, Integer> {
+    // Repositorio limpio y listo para heredar los métodos CRUD de JPA
 }

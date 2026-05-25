@@ -14,16 +14,17 @@ public class BoletoController {
 
     private final BoletoService service;
 
-    public BoletoController(PrecioService service) { 
+    // CORREGIDO: Ahora recibe BoletoService en lugar de PrecioService
+    public BoletoController(BoletoService service) { 
         this.service = service;
     }
 
-    @getMapping
+    @GetMapping // CORREGIDO: 'G' mayúscula
     public ResponseEntity<List<BoletoDTO>> obtenerTodos() {
         return ResponseEntity.ok(service.listarTodos());
     }
 
-    @getMapping("/{id}")
+    @GetMapping("/{id}") // CORREGIDO: 'G' mayúscula
     public ResponseEntity<BoletoDTO> obtenerPorId(@PathVariable Integer id) {
         BoletoDTO dto = service.buscarPorId(id);
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
@@ -34,7 +35,7 @@ public class BoletoController {
         return ResponseEntity.ok(service.guardar(dto));
     }
 
-    @deleteMapping("/{id}")
+    @DeleteMapping("/{id}") // CORREGIDO: 'D' mayúscula
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
