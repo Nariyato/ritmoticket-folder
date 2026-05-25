@@ -13,7 +13,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 
 public class Pago {
 
@@ -37,11 +36,9 @@ public class Pago {
     private EstadoPago estado;
 
     @OneToMany(mappedBy = "pago", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Transaccion> transacciones = new ArrayList<>();
+    private List<Transaccion> transacciones = new ArrayList<>(); // Sin builder.default
 
     @OneToMany(mappedBy = "pago", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private List<Reembolso> reembolsos = new ArrayList<>();
 
     @Override
