@@ -1,15 +1,16 @@
 package cl.triskeledu.catalogo.mapper;
 
 import cl.triskeledu.catalogo.model.CatalogoEvento;
-import cl.triskeledu.catalogo.dto.CatalogoEventoDTO;
+import cl.triskeledu.catalogo.dto.CatalogoEventoRequestDTO;
+import cl.triskeledu.catalogo.dto.CatalogoEventoResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CatalogoEventoMapper {
 
-    public CatalogoEventoDTO toDTO(CatalogoEvento entity) {
+    public CatalogoEventoResponseDTO toResponseDTO(CatalogoEvento entity) {
         if (entity == null) return null;
-        return CatalogoEventoDTO.builder()
+        return CatalogoEventoResponseDTO.builder()
                 .idCatalogo(entity.getIdCatalogo())
                 .nombreEvento(entity.getNombreEvento())
                 .categoria(entity.getCategoria())
@@ -18,14 +19,13 @@ public class CatalogoEventoMapper {
                 .build();
     }
 
-    public CatalogoEvento toEntity(CatalogoEventoDTO dto) {
-        if (dto == null) return null;
+    public CatalogoEvento toEntity(CatalogoEventoRequestDTO request) {
+        if (request == null) return null;
         return CatalogoEvento.builder()
-                .idCatalogo(dto.getIdCatalogo())
-                .nombreEvento(dto.getNombreEvento())
-                .categoria(dto.getCategoria())
-                .fecha(dto.getFecha())
-                .estado(dto.getEstado())
+                .nombreEvento(request.getNombreEvento())
+                .categoria(request.getCategoria())
+                .fecha(request.getFecha())
+                .estado(request.getEstado())
                 .build();
     }
 }

@@ -1,7 +1,8 @@
 package cl.triskeledu.catalogo.service;
 
 import cl.triskeledu.catalogo.model.CatalogoEvento;
-import cl.triskeledu.catalogo.dto.CatalogoEventoDTO;
+import cl.triskeledu.catalogo.dto.CatalogoEventoRequestDTO;
+import cl.triskeledu.catalogo.dto.CatalogoEventoResponseDTO;
 import cl.triskeledu.catalogo.mapper.CatalogoEventoMapper;
 import cl.triskeledu.catalogo.repository.CatalogoEventoRepository;
 import org.springframework.stereotype.Service;
@@ -20,33 +21,48 @@ public class CatalogoEventoServiceImpl implements CatalogoEventoService {
     }
 
     @Override
-    public List<CatalogoEventoDTO> obtenerTodos() {
+    public List<CatalogoEventoResponseDTO> obtenerTodos() {
         return repository.findAll().stream()
-                .map(mapper::toDTO)
+                .map(mapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CatalogoEventoDTO buscarPorId(Integer id) {
+    public CatalogoEventoResponseDTO buscarPorId(Integer id) {
         CatalogoEvento evento = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El evento de catálogo con ID " + id + " no existe."));
-        return mapper.toDTO(evento);
+        return mapper.toResponseDTO(evento);
     }
 
     @Override
-    public CatalogoEventoDTO guardar(CatalogoEventoDTO dto) {
-        // LÓGICA DE NEGOCIO: No permitir dos eventos idénticos el mismo día
-        boolean eventoDuplicado = repository.findAll().stream()
-                .anyMatch(e -> e.getNombreEvento().equalsIgnoreCase(dto.getNombreEvento()) 
-                        && e.getFecha().equals(dto.getFecha())
-                        && !e.getIdCatalogo().equals(dto.getIdCatalogo()));
-        
-        if (eventoDuplicado) {
-            throw new IllegalArgumentException("Ya existe un evento registrado con ese nombre para la fecha " + dto.getFecha());
+    public CatalogoEventoResponseDTO crear(CatalogoEventoRequestDTO request) {
+        if (repository.existsByNombreEventoIgnoreCaseAndFecha(request.getNombreEvento(), request.getFecha())) {
+            throw new IllegalArgumentException("Ya existe un evento registrado con ese nombre para la fecha " + request.getFecha());
         }
 
-        CatalogoEvento evento = mapper.toEntity(dto);
-        return mapper.toDTO(repository.save(evento));
+        CatalogoEvento evento = mapper.toEntity(request);
+        return mapper.toResponseDTO(repository.save(evento));
+    }
+
+    @Override
+    public CatalogoEventoResponseDTO actualizar(Integer id, CatalogoEventoRequestDTO request) {
+        CatalogoEvento eventoExistente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("El evento con ID " + id + " no existe."));
+
+        // Validar que no estemos duplicando otro evento distinto
+        boolean duplicado = repository.existsByNombreEventoIgnoreCaseAndFechaAndIdCatalogoNot(
+                request.getNombreEvento(), request.getFecha(), id);
+        
+        if (duplicado) {
+            throw new IllegalArgumentException("Ya existe otro evento registrado con ese nombre para la fecha " + request.getFecha());
+        }
+
+        eventoExistente.setNombreEvento(request.getNombreEvento());
+        eventoExistente.setCategoria(request.getCategoria());
+        eventoExistente.setFecha(request.getFecha());
+        eventoExistente.setEstado(request.getEstado());
+
+        return mapper.toResponseDTO(repository.save(eventoExistente));
     }
 
     @Override

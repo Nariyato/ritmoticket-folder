@@ -16,8 +16,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleRuntime(RuntimeException ex) {
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
-        error.put("status", "404");
+        error.put("status", "404"); // Ojo: RuntimeException genérica 404 puede ser engañosa, pero mantengo tu lógica
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        error.put("status", "400");
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

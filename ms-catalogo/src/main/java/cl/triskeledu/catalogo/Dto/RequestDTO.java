@@ -7,9 +7,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class CatalogoEventoDTO {
-
-    private Integer idCatalogo;
+public class CatalogoEventoRequestDTO {
 
     @NotBlank(message = "El nombre del evento es obligatorio")
     @Size(min = 3, max = 100, message = "El nombre del evento debe tener entre 3 y 100 caracteres")
