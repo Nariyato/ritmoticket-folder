@@ -18,7 +18,7 @@ import java.time.LocalDate;
 
 public class Correo {
 
-    @Id
+@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_correo", nullable = false)
     private Integer idCorreo;
@@ -28,6 +28,9 @@ public class Correo {
 
     @Column(name = "asunto", length = 100)
     private String asunto;
+
+    @Column(name = "cuerpo", columnDefinition = "TEXT")
+    private String cuerpo;
 
     @CreatedDate
     @Column(name = "fecha")
