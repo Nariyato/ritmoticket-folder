@@ -1,4 +1,4 @@
-package cl.triskeledu.boletos.Model;
+package cl.triskeledu.boletos.model;
 
 import jakarta.persistence.*;
 import lombok.*;
