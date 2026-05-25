@@ -36,7 +36,7 @@ public class EscenarioService {
     }
 
     public List<EscenarioResponse> findByRecintoId(Long idRecinto) {
-        return escenarioRepository.findByIdRecinto(idRecinto).stream()
+        return escenarioRepository.findByRecinto_IdRecinto(idRecinto).stream()
                 .map(mapper::toResponse).collect(Collectors.toList());
     }
 

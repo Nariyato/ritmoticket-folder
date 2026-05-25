@@ -36,7 +36,7 @@ public class SectorService {
     }
 
     public List<SectorResponse> findByEscenarioId(Long idEscenario) {
-        return sectorRepository.findByIdEscenario(idEscenario).stream()
+        return sectorRepository.findByEscenario_IdEscenario(idEscenario).stream()
                 .map(mapper::toResponse).collect(Collectors.toList());
     }
 

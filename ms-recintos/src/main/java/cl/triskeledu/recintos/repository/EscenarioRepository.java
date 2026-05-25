@@ -9,5 +9,5 @@ import cl.triskeledu.recintos.model.Escenario;
 public interface EscenarioRepository extends JpaRepository<Escenario, Long> {
     
     // Método para buscar escenarios por el ID del recinto padre
-    List<Escenario> findByIdRecinto(Long idRecinto);
+    List<Escenario> findByRecinto_IdRecinto(Long idRecinto);
 }

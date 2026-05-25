@@ -141,13 +141,13 @@ cd /d C:\ritmoticket-folder\ms-artistas
 
 call mvn clean install -U
 
-cd /d C:\ritmoticket-folder\ms-boletos
 
-call mvn clean install -U
 
-cd /d C:\ritmoticket-folder\ms-catalogo
 
-call mvn clean install -U
+
+
+
+
 
 cd /d C:\ritmoticket-folder\ms-compras
 
@@ -161,9 +161,9 @@ cd /d C:\ritmoticket-folder\ms-pagos
 
 call mvn clean install -U
 
-cd /d C:\ritmoticket-folder\ms-precios
 
-call mvn clean install -U
+
+
 
 cd /d C:\ritmoticket-folder\ms-recintos
 
@@ -192,9 +192,9 @@ rmdir /s /q C:\ritmoticket-folder\eureka\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-artistas\target
 
-rmdir /s /q C:\ritmoticket-folder\ms-boletos\target
 
-rmdir /s /q C:\ritmoticket-folder\ms-catalogo\target
+
+
 
 rmdir /s /q C:\ritmoticket-folder\ms-compras\target
 
@@ -202,7 +202,7 @@ rmdir /s /q C:\ritmoticket-folder\ms-notificaciones\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-pagos\target
 
-rmdir /s /q C:\ritmoticket-folder\ms-precios\target
+
 
 rmdir /s /q C:\ritmoticket-folder\ms-recintos\target
 

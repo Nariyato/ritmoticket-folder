@@ -9,5 +9,5 @@ import cl.triskeledu.recintos.model.Sector;
 public interface SectorRepository extends JpaRepository<Sector, Long> {
     
     // Método para buscar sectores por el ID del escenario padre
-    List<Sector> findByIdEscenario(Long idEscenario);
+    List<Sector> findByEscenario_IdEscenario(Long idEscenario);
 }
