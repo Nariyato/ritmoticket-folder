@@ -1,42 +1,51 @@
 package cl.triskeledu.compras.service;
 
+
+import cl.triskeledu.compras.client.BoletoClient;
 import cl.triskeledu.compras.model.Compra;
+import cl.triskeledu.compras.model.DetalleCompra;
 import cl.triskeledu.compras.repository.CompraRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
-@SuppressWarnings("null")
 
 public class CompraService {
 
-    private final CompraRepository compraRepository;
-
-    @Transactional(readOnly = true)
-    public List<Compra> listarTodas() {
-        return compraRepository.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public Compra obtenerPorId(Integer id) {
-        return compraRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Compra no encontrada con el ID: " + id));
-    }
+private final CompraRepository compraRepository;
+    private final BoletoClient boletoClient;
 
     @Transactional
     public Compra guardar(Compra compra) {
-        // Aquí podrías agregar lógica para recalcular el total antes de guardar
+        int totalCompra = 0;
+
+        if (compra.getDetalles() != null) {
+            for (DetalleCompra detalle : compra.getDetalles()) {
+                Integer precio = boletoClient.obtenerPrecioBoleto(detalle.getIdBoleto());
+
+                int subtotal = precio * detalle.getCantidad();
+
+                // Convertimos el subtotal a BigDecimal para que la entidad lo acepte
+                detalle.setSubtotal(BigDecimal.valueOf(subtotal));
+                detalle.setCompra(compra);
+
+                totalCompra += subtotal;
+            }
+        }
+
+        // Convertimos el totalCompra a BigDecimal para que la entidad lo acepte
+        compra.setTotal(BigDecimal.valueOf(totalCompra));
+        compra.setEstado(cl.triskeledu.compras.model.EstadoCompra.PENDIENTE);
+
         return compraRepository.save(compra);
     }
 
-    @Transactional
-    public void eliminar(Integer id) {
-        compraRepository.deleteById(id);
+    public List<Compra> listarTodas() {
+        return compraRepository.findAll();
     }
-
 }
