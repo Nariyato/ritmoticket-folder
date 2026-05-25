@@ -1,6 +1,7 @@
 package cl.triskeledu.catalogo.controller;
 
-import cl.triskeledu.catalogo.dto.CatalogoEventoDTO;
+import cl.triskeledu.catalogo.dto.CatalogoEventoRequestDTO;
+import cl.triskeledu.catalogo.dto.CatalogoEventoResponseDTO;
 import cl.triskeledu.catalogo.service.CatalogoEventoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,19 +19,24 @@ public class CatalogoEventoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CatalogoEventoDTO>> listar() {
+    public ResponseEntity<List<CatalogoEventoResponseDTO>> listar() {
         return ResponseEntity.ok(service.obtenerTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CatalogoEventoDTO> obtener(@PathVariable Integer id) {
-        CatalogoEventoDTO dto = service.buscarPorId(id);
-        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
+    public ResponseEntity<CatalogoEventoResponseDTO> obtener(@PathVariable Integer id) {
+        CatalogoEventoResponseDTO dto = service.buscarPorId(id);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping
-    public ResponseEntity<CatalogoEventoDTO> crear(@Valid @RequestBody CatalogoEventoDTO dto) {
-        return ResponseEntity.ok(service.guardar(dto));
+    public ResponseEntity<CatalogoEventoResponseDTO> crear(@Valid @RequestBody CatalogoEventoRequestDTO request) {
+        return ResponseEntity.ok(service.crear(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CatalogoEventoResponseDTO> actualizar(@PathVariable Integer id, @Valid @RequestBody CatalogoEventoRequestDTO request) {
+        return ResponseEntity.ok(service.actualizar(id, request));
     }
 
     @DeleteMapping("/{id}")

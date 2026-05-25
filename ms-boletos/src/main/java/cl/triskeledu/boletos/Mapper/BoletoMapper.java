@@ -1,6 +1,6 @@
 package cl.triskeledu.boletos.mapper;
 
-import cl.triskeledu.boletos.Model.Boleto;
+import cl.triskeledu.boletos.model.Boleto;
 import cl.triskeledu.boletos.dto.BoletoDTO;
 import org.springframework.stereotype.Component;
 
