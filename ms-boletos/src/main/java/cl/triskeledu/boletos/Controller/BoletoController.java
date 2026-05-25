@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/boletos")
@@ -13,7 +14,7 @@ public class BoletoController {
 
     private final BoletoService service;
 
-    public BoletoController(BoletoService service) {
+    public BoletoController(PrecioService service) { 
         this.service = service;
     }
 
@@ -28,8 +29,8 @@ public class BoletoController {
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
     }
 
-    @postMapping
-    public ResponseEntity<BoletoDTO> crear(@RequestBody BoletoDTO dto) {
+    @PostMapping
+    public ResponseEntity<BoletoDTO> crear(@Valid @RequestBody BoletoDTO dto) { 
         return ResponseEntity.ok(service.guardar(dto));
     }
 

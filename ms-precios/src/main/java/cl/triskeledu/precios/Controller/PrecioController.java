@@ -5,6 +5,7 @@ import cl.triskeledu.precios.service.PrecioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/precios")
@@ -28,7 +29,7 @@ public class PrecioController {
     }
 
     @PostMapping
-    public ResponseEntity<PrecioDTO> crear(@RequestBody PrecioDTO dto) {
+    public ResponseEntity<PrecioDTO> crear(@Valid @RequestBody PrecioDTO dto) { 
         return ResponseEntity.ok(service.guardar(dto));
     }
 

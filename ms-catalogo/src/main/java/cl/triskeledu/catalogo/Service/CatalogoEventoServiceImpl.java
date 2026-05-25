@@ -28,18 +28,32 @@ public class CatalogoEventoServiceImpl implements CatalogoEventoService {
 
     @Override
     public CatalogoEventoDTO buscarPorId(Integer id) {
-        CatalogoEvento evento = repository.findById(id).orElse(null);
+        CatalogoEvento evento = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("El evento de catálogo con ID " + id + " no existe."));
         return mapper.toDTO(evento);
     }
 
     @Override
     public CatalogoEventoDTO guardar(CatalogoEventoDTO dto) {
+        // LÓGICA DE NEGOCIO: No permitir dos eventos idénticos el mismo día
+        boolean eventoDuplicado = repository.findAll().stream()
+                .anyMatch(e -> e.getNombreEvento().equalsIgnoreCase(dto.getNombreEvento()) 
+                        && e.getFecha().equals(dto.getFecha())
+                        && !e.getIdCatalogo().equals(dto.getIdCatalogo()));
+        
+        if (eventoDuplicado) {
+            throw new IllegalArgumentException("Ya existe un evento registrado con ese nombre para la fecha " + dto.getFecha());
+        }
+
         CatalogoEvento evento = mapper.toEntity(dto);
         return mapper.toDTO(repository.save(evento));
     }
 
     @Override
     public void eliminar(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("No se puede eliminar. El evento con ID " + id + " no existe.");
+        }
         repository.deleteById(id);
     }
 }

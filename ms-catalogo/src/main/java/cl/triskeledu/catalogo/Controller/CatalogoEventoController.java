@@ -5,6 +5,7 @@ import cl.triskeledu.catalogo.service.CatalogoEventoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/catalogo")
@@ -28,7 +29,7 @@ public class CatalogoEventoController {
     }
 
     @PostMapping
-    public ResponseEntity<CatalogoEventoDTO> crear(@RequestBody CatalogoEventoDTO dto) {
+    public ResponseEntity<CatalogoEventoDTO> crear(@Valid @RequestBody CatalogoEventoDTO dto) {
         return ResponseEntity.ok(service.guardar(dto));
     }
 

@@ -1,6 +1,6 @@
 package cl.triskeledu.boletos.service;
 
-import cl.triskeledu.boletos.Model.Boleto;
+import cl.triskeledu.boletos.model.Boleto;
 import cl.triskeledu.boletos.dto.BoletoDTO;
 import cl.triskeledu.boletos.mapper.BoletoMapper;
 import cl.triskeledu.boletos.repository.BoletoRepository;
@@ -28,18 +28,31 @@ public class BoletoServiceImpl implements BoletoService {
 
     @Override
     public BoletoDTO buscarPorId(Integer id) {
-        Boleto boleto = repository.findById(id).orElse(null);
+        Boleto boleto = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("El boleto con ID " + id + " no existe."));
         return mapper.toDTO(boleto);
     }
 
     @Override
     public BoletoDTO guardar(BoletoDTO dto) {
+        // LÓGICA DE NEGOCIO: Validar que el código del boleto no esté duplicado
+        boolean existeCodigo = repository.findAll().stream()
+                .anyMatch(b -> b.getCodigo().equalsIgnoreCase(dto.getCodigo()) 
+                        && !b.getIdBoleto().equals(dto.getIdBoleto()));
+        
+        if (existeCodigo) {
+            throw new IllegalArgumentException("El código de boleto '" + dto.getCodigo() + "' ya está registrado.");
+        }
+
         Boleto boleto = mapper.toEntity(dto);
         return mapper.toDTO(repository.save(boleto));
     }
 
     @Override
     public void eliminar(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("No se puede eliminar. El boleto con ID " + id + " no existe.");
+        }
         repository.deleteById(id);
     }
 }
