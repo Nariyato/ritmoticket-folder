@@ -23,4 +23,7 @@ public class BoletoDTO {
 
     @NotNull(message = "La fecha de emisión es obligatoria")
     private LocalDate fechaEmision;
+
+    
+    
 }

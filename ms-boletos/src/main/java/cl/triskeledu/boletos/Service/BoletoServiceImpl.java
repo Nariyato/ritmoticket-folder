@@ -34,18 +34,13 @@ public class BoletoServiceImpl implements BoletoService {
     }
 
     @Override
-    public BoletoDTO guardar(BoletoDTO dto) {
-        // LÓGICA DE NEGOCIO: Validar que el código del boleto no esté duplicado
-        boolean existeCodigo = repository.findAll().stream()
-                .anyMatch(b -> b.getCodigo().equalsIgnoreCase(dto.getCodigo()) 
-                        && !b.getIdBoleto().equals(dto.getIdBoleto()));
-        
-        if (existeCodigo) {
-            throw new IllegalArgumentException("El código de boleto '" + dto.getCodigo() + "' ya está registrado.");
+    public BoletoDTO guardar(BoletoDTO dto){
+        if (dto.getIdBoleto()== null && repository.existsByCodigo(dto.getCodigo())){
+            throw new IllegalArgumentException("El codigo de boletos "+dto.getCodigo()+"")
         }
-
-        Boleto boleto = mapper.toEntity(dto);
+        Boleto boleto= mapper.toEntity(dto);
         return mapper.toDTO(repository.save(boleto));
+    }
     }
 
     @Override
@@ -55,4 +50,3 @@ public class BoletoServiceImpl implements BoletoService {
         }
         repository.deleteById(id);
     }
-}
