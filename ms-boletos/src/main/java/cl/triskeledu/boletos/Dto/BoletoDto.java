@@ -1,29 +1,49 @@
-package cl.triskeledu.boletos.dto;
+package cl.triskeledu.boletos.controller;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
-import java.time.LocalDate;
+import cl.triskeledu.boletos.dto.BoletoRequestDTO;
+import cl.triskeledu.boletos.dto.BoletoResponseDTO;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class BoletoDTO {
 
-    private Integer idBoleto;
+import jakarta.validation.Valid;
 
-    @NotBlank(message = "El código del boleto no puede estar vacío")
-    @Size(min = 5, max = 50, message = "El código debe tener entre 5 y 50 caracteres")
-    private String codigo;
 
-    @NotBlank(message = "El tipo de boleto no puede estar vacío")
-    private String tipo;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
-    @NotBlank(message = "El estado no puede estar vacío")
-    private String estado;
+import org.springframework.beans.factory.annotation.Autowired;
 
-    @NotNull(message = "La fecha de emisión es obligatoria")
-    private LocalDate fechaEmision;
+
+
+@RestController
+@RequestMapping("/api/boletos")
+public class BoletoController {
 
     
-    
+
+    @PostMapping
+    public ResponseEntity<BoletoResponseDTO> crearBoleto(@Valid @RequestBody BoletoRequestDTO request) {
+       
+        
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BoletoResponseDTO> obtenerBoleto(@PathVariable Integer id) {
+        
+        
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BoletoResponseDTO> actualizarBoleto(@PathVariable Integer id, @Valid @RequestBody BoletoRequestDTO request) {
+        
+        
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarBoleto(@PathVariable Integer id) {
+        return ResponseEntity.noContent().build();
+    }
 }
