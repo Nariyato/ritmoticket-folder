@@ -141,13 +141,13 @@ cd /d C:\ritmoticket-folder\ms-artistas
 
 call mvn clean install -U
 
+cd /d C:\ritmoticket-folder\ms-boletos
 
+call mvn clean install -U
 
+cd /d C:\ritmoticket-folder\ms-catalogo
 
-
-
-
-
+call mvn clean install -U
 
 cd /d C:\ritmoticket-folder\ms-compras
 
@@ -161,9 +161,9 @@ cd /d C:\ritmoticket-folder\ms-pagos
 
 call mvn clean install -U
 
+cd /d C:\ritmoticket-folder\ms-precios
 
-
-
+call mvn clean install -U
 
 cd /d C:\ritmoticket-folder\ms-recintos
 
