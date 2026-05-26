@@ -3,7 +3,7 @@
 -- =========================================
 
 -- Conectarse a la base de datos específica
-\c boletos;
+ \c boletos;
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar errores de FK)
 DROP TABLE IF EXISTS reservas;
@@ -13,17 +13,18 @@ DROP TABLE IF EXISTS proy_eventos;
 DROP TABLE IF EXISTS proy_usuarios;
 
 -- 2. CREACIÓN DE TABLAS DE PROYECCIÓN (Datos externos necesarios localmente)
+CREATE TABLE proy_eventos (
+    id_evento INTEGER PRIMARY KEY,
+    nombre_evento VARCHAR(100),
+    fecha DATE
+);
+
 CREATE TABLE proy_usuarios (
-    id_usuario INT,
+    id_usuario INT PRIMARY KEY,
     nombre VARCHAR(100),
     correo VARCHAR(100)
 );
 
-CREATE TABLE proy_eventos (
-    id_evento INT,
-    nombre_evento VARCHAR(100),
-    fecha DATE
-);
 
 -- 3. CREACIÓN DE TABLAS MAESTRAS DEL MICROSERVICIO
 CREATE TABLE zonas (

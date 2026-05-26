@@ -46,6 +46,8 @@ CREATE TABLE proy_eventos (
 
 CREATE TABLE proy_boletos (
     id_boleto INT,
+    id_evento INT, 
+    id_zona INT, 
     codigo VARCHAR(50),
     estado VARCHAR(20)
 );
@@ -76,7 +78,7 @@ INSERT INTO proy_eventos (id_evento, nombre_evento, fecha) VALUES
 (1, 'Gira Ven Aquí - Los Bunkers', '2025-12-15'),
 (2, 'Radical Optimism Tour - Dua Lipa', '2026-03-10');
 
-INSERT INTO proy_boletos (id_boleto, codigo, estado) VALUES
-(1, 'TKT-LB-001', 'Vendido'),
-(3, 'TKT-DL-501', 'Reservado'),
-(4, 'TKT-DL-502', 'Vendido');
+INSERT INTO proy_boletos (id_boleto, id_evento, id_zona, codigo, estado) VALUES
+(1, 1, 1, 'TKT-LB-001', 'Vendido'),
+(3, 1, 3, 'TKT-DL-501', 'Reservado'),
+(4, 1, 4, 'TKT-DL-502', 'Vendido');

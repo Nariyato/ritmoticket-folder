@@ -13,3 +13,5 @@ public interface CompraClient {
     ProyCompra obtenerCompra(@PathVariable("id") Integer id);
 
 }
+
+

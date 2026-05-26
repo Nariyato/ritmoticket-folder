@@ -46,8 +46,8 @@ CREATE TABLE proy_compras (
 
 CREATE TABLE proy_boletos (
     id_boleto INT,
-    id_evento INT REFERENCES proy_eventos(id_evento), 
-    id_zona INT REFERENCES zonas(id_zona), 
+    id_evento INT, 
+    id_zona INT, 
     codigo VARCHAR(50),
     estado VARCHAR(20)
 );
