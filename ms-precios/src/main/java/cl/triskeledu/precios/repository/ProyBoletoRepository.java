@@ -1,6 +1,6 @@
 package cl.triskeledu.precios.repository;
 
-import cl.triskeledu.precios.Model.ProyBoleto;
+import cl.triskeledu.precios.model.ProyBoleto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

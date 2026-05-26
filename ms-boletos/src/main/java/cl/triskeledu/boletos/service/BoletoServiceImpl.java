@@ -1,7 +1,7 @@
 package cl.triskeledu.boletos.service;
 
 import cl.triskeledu.boletos.model.Boleto;
-import cl.triskeledu.boletos.dto.BoletoDTO;
+import cl.triskeledu.boletos.dto.BoletoResponseDTO;
 import cl.triskeledu.boletos.mapper.BoletoMapper;
 import cl.triskeledu.boletos.repository.BoletoRepository;
 import org.springframework.stereotype.Service;
@@ -20,27 +20,26 @@ public class BoletoServiceImpl implements BoletoService {
     }
 
     @Override
-    public List<BoletoDTO> listarTodos() {
+    public List<BoletoResponseDTO> listarTodos() {
         return repository.findAll().stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public BoletoDTO buscarPorId(Integer id) {
+    public BoletoResponseDTO buscarPorId(Integer id) {
         Boleto boleto = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El boleto con ID " + id + " no existe."));
         return mapper.toDTO(boleto);
     }
 
     @Override
-    public BoletoDTO guardar(BoletoDTO dto){
-        if (dto.getIdBoleto()== null && repository.existsByCodigo(dto.getCodigo())){
-            throw new IllegalArgumentException("El codigo de boletos "+dto.getCodigo()+"")
+    public BoletoResponseDTO guardar(BoletoResponseDTO dto) {
+        if (dto.getIdBoleto() == null && repository.existsByCodigo(dto.getCodigo())) {
+            throw new IllegalArgumentException("El código de boletos " + dto.getCodigo() + " ya existe.");
         }
-        Boleto boleto= mapper.toEntity(dto);
+        Boleto boleto = mapper.toEntity(dto);
         return mapper.toDTO(repository.save(boleto));
-    }
     }
 
     @Override
@@ -50,3 +49,4 @@ public class BoletoServiceImpl implements BoletoService {
         }
         repository.deleteById(id);
     }
+}

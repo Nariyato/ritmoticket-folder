@@ -1,6 +1,6 @@
 package cl.triskeledu.precios.repository;
 
-import cl.triskeledu.precios.Model.Precio;
+import cl.triskeledu.precios.model.Precio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

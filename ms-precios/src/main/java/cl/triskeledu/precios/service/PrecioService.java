@@ -1,11 +1,12 @@
 package cl.triskeledu.precios.service;
 
-import cl.triskeledu.precios.dto.PrecioDTO;
+import cl.triskeledu.precios.dto.PrecioRequestDTO;
+import cl.triskeledu.precios.dto.PrecioResponseDTO;
 import java.util.List;
 
 public interface PrecioService {
-    List<PrecioDTO> obtenerTodos();
-    PrecioDTO buscarPorId(Integer id);
-    PrecioDTO guardar(PrecioDTO dto);
+    List<PrecioResponseDTO> obtenerTodos();
+    PrecioResponseDTO buscarPorId(Integer id);
+    PrecioResponseDTO guardar(PrecioRequestDTO dto);
     void eliminar(Integer id);
 }

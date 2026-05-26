@@ -1,11 +1,11 @@
 package cl.triskeledu.precios.service;
 
 import cl.triskeledu.precios.model.Precio;
-import cl.triskeledu.precios.dto.PrecioDTO;
+import cl.triskeledu.precios.dto.PrecioRequestDTO;
+import cl.triskeledu.precios.dto.PrecioResponseDTO;
 import cl.triskeledu.precios.mapper.PrecioMapper;
 import cl.triskeledu.precios.repository.PrecioRepository;
 import org.springframework.stereotype.Service;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,34 +15,30 @@ public class PrecioServiceImpl implements PrecioService {
     private final PrecioRepository repository;
     private final PrecioMapper mapper;
 
+    // Constructor manual para asegurar que Spring inyecte las dependencias
     public PrecioServiceImpl(PrecioRepository repository, PrecioMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
 
     @Override
-    public List<PrecioDTO> obtenerTodos() {
+    public List<PrecioResponseDTO> obtenerTodos() {
         return repository.findAll().stream()
-                .map(mapper::toDTO)
-                .collect(Collectors.toList());
+                .map(mapper::toResponseDTO)
+                .collect(Collectors.toList()); // Cambiado para compatibilidad
     }
 
     @Override
-    public PrecioDTO buscarPorId(Integer id) {
-        Precio precio = repository.findById(id)
+    public PrecioResponseDTO buscarPorId(Integer id) {
+        return repository.findById(id)
+                .map(mapper::toResponseDTO)
                 .orElseThrow(() -> new RuntimeException("El registro de precio con ID " + id + " no existe."));
-        return mapper.toDTO(precio);
     }
 
     @Override
-    public PrecioDTO guardar(PrecioDTO dto) {
-        // LÓGICA DE NEGOCIO: Impedir valores erróneos o excesivos por seguridad
-        if (dto.getValorBase().compareTo(new BigDecimal("10000000")) > 0) {
-            throw new IllegalArgumentException("El valor base ingresado supera el límite permitido por transacción.");
-        }
-
+    public PrecioResponseDTO guardar(PrecioRequestDTO dto) {
         Precio precio = mapper.toEntity(dto);
-        return mapper.toDTO(repository.save(precio));
+        return mapper.toResponseDTO(repository.save(precio));
     }
 
     @Override

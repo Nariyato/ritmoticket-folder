@@ -1,15 +1,15 @@
 package cl.triskeledu.boletos.mapper;
 
 import cl.triskeledu.boletos.model.Boleto;
-import cl.triskeledu.boletos.dto.BoletoDTO;
+import cl.triskeledu.boletos.dto.BoletoResponseDTO; // Importante: Nombre correcto
 import org.springframework.stereotype.Component;
 
 @Component
 public class BoletoMapper {
 
-    public BoletoDTO toDTO(Boleto boleto) {
+    public BoletoResponseDTO toDTO(Boleto boleto) {
         if (boleto == null) return null;
-        return BoletoDTO.builder()
+        return BoletoResponseDTO.builder()
                 .idBoleto(boleto.getIdBoleto())
                 .codigo(boleto.getCodigo())
                 .tipo(boleto.getTipo())
@@ -18,7 +18,7 @@ public class BoletoMapper {
                 .build();
     }
 
-    public Boleto toEntity(BoletoDTO dto) {
+    public Boleto toEntity(BoletoResponseDTO dto) {
         if (dto == null) return null;
         return Boleto.builder()
                 .idBoleto(dto.getIdBoleto())

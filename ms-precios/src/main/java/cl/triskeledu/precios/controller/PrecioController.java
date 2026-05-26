@@ -1,41 +1,38 @@
 package cl.triskeledu.precios.controller;
 
-import cl.triskeledu.precios.dto.PrecioDTO;
 import cl.triskeledu.precios.service.PrecioService;
+import cl.triskeledu.precios.dto.PrecioRequestDTO;
+import cl.triskeledu.precios.dto.PrecioResponseDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import jakarta.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/precios")
+@RequiredArgsConstructor
 public class PrecioController {
 
     private final PrecioService service;
 
-    public PrecioController(PrecioService service) {
-        this.service = service;
-    }
-
     @GetMapping
-    public ResponseEntity<List<PrecioDTO>> listar() {
+    public ResponseEntity<List<PrecioResponseDTO>> listar() {
         return ResponseEntity.ok(service.obtenerTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PrecioDTO> obtener(@PathVariable("id") Integer id) { // CORREGIDO: Añadido @PathVariable explícito
-        PrecioDTO dto = service.buscarPorId(id);
-        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
+    public ResponseEntity<PrecioResponseDTO> obtener(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<PrecioDTO> crear(@Valid @RequestBody PrecioDTO dto) {
+    public ResponseEntity<PrecioResponseDTO> crear(@Valid @RequestBody PrecioRequestDTO dto) {
         return ResponseEntity.ok(service.guardar(dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable("id") Integer id) { // CORREGIDO: Añadido @PathVariable explícito
+    public ResponseEntity<Void> eliminar(@PathVariable("id") Integer id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
     }
