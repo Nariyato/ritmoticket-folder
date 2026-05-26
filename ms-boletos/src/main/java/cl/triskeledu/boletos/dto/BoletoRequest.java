@@ -1,4 +1,5 @@
-package cl.triskeledu.boletos.controller;
+package cl.triskeledu.boletos.dto;
+
 
 // CORRECCIÓN: Importamos el nombre correcto del DTO
 import cl.triskeledu.boletos.dto.BoletoResponseDTO; 

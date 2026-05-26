@@ -9,17 +9,18 @@ import org.springframework.stereotype.Component;
 public class PrecioMapper {
 
     public PrecioResponseDTO toResponseDTO(Precio entity) {
-        return PrecioResponseDTO.builder()
-                .id(entity.getId())
-                .valorBase(entity.getValorBase())
-                .moneda(entity.getMoneda())
-                .estado(entity.getEstado())
-                .build();
-    }
+    return PrecioResponseDTO.builder()
+            .id(entity.getId())
+            .valorBase(entity.getValor())
+            // Si moneda es un objeto, usamos .toString() o .name()
+            .moneda(entity.getMoneda() != null ? entity.getMoneda().toString() : null) 
+            .estado(entity.getEstado())
+            .build();
+}
 
     public Precio toEntity(PrecioRequestDTO dto) {
-        return Precio.builder()
-                .valorBase(dto.getValorBase())
+        return Precio.builder() // Quitamos el ((Object) ...) que estaba mal
+                .valor(dto.getValor()) // Debe coincidir con el getter del DTO
                 .moneda(dto.getMoneda())
                 .estado(dto.getEstado())
                 .build();
