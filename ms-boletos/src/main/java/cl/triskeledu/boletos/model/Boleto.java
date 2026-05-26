@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "boletos")
@@ -19,6 +20,14 @@ public class Boleto {
     @Column(name = "id_boleto", nullable = false)
     private Integer idBoleto;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_evento", nullable = false)
+    private ProyEvento evento;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_zona", nullable = false)
+    private Zona zona;
+
     @Column(name = "codigo", length = 50)
     private String codigo;
 
@@ -31,7 +40,7 @@ public class Boleto {
     @Column(name = "fecha_emision")
     private LocalDate fechaEmision;
 
-    @OneToMany(mappedBy = "boleto")
+    @OneToMany(mappedBy = "boleto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserva> reservas;
 
     @Override
@@ -39,11 +48,11 @@ public class Boleto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Boleto boleto = (Boleto) o;
-        return idBoleto != null && idBoleto.equals(boleto.idBoleto);
+        return Objects.equals(idBoleto, boleto.idBoleto);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(idBoleto);
     }
 }

@@ -1,32 +1,34 @@
 package cl.triskeledu.boletos.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-// CORRECCIÓN: Importamos el nombre correcto del DTO
-import cl.triskeledu.boletos.dto.BoletoResponseDTO; 
-import cl.triskeledu.boletos.service.BoletoService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/boletos")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BoletoRequest {
 
-    private final BoletoService boletoService;
+    @NotNull(message = "El ID del evento es obligatorio")
+    private Integer idEvento;
 
-    public BoletoRequest(BoletoService boletoService) {
-        this.boletoService = boletoService;
-    }
+    @NotNull(message = "El ID de la zona es obligatorio")
+    private Integer idZona;
 
-    // CORRECCIÓN: Usamos BoletoResponseDTO en lugar de BoletoDTO
-    @GetMapping
-    public ResponseEntity<List<BoletoResponseDTO>> obtenerTodos() {
-        return ResponseEntity.ok(boletoService.listarTodos());
-    }
+    @NotBlank(message = "El código del boleto es obligatorio")
+    @Size(max = 50, message = "El código del boleto no puede superar los 50 caracteres")
+    private String codigo;
 
-    // CORRECCIÓN: Usamos BoletoResponseDTO en lugar de BoletoDTO
-    @PostMapping
-    public ResponseEntity<BoletoResponseDTO> crear(@RequestBody BoletoResponseDTO dto) {
-        return ResponseEntity.ok(boletoService.guardar(dto));
-    }
+    @NotBlank(message = "El tipo de boleto es obligatorio")
+    @Size(max = 50, message = "El tipo de boleto no puede superar los 50 caracteres")
+    private String tipo;
+
+    @NotBlank(message = "El estado es obligatorio")
+    @Size(max = 20, message = "El estado no puede superar los 20 caracteres")
+    private String estado;
 }

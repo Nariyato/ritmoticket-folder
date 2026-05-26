@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoletoRepository extends JpaRepository<Boleto, Integer> {
     boolean existsByCodigo(String codigo);
+
+    boolean existsByEventoIdEvento(Integer idEvento);
 }
+
