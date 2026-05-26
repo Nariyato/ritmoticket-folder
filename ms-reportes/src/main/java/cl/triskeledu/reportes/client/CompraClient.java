@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import cl.triskeledu.reportes.model.ProyCompra;
 
-@FeignClient(name = "ms-compras", url = "${url.ms-compras}")
+@FeignClient(name = "ms-compras")
 
 public interface CompraClient {
     @GetMapping("/api/compras/{id}")

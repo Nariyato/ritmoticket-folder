@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface CatalogoClient {
 
     // Asumimos que el ms-catalogo tendrá un endpoint para verificar la existencia del evento
-    @GetMapping("/api/v1/eventos/existe/ivEvento/{idEvento}")
+    @GetMapping("/api/v1/eventos/existe/idEvento/{idEvento}")
     boolean existsByEventoId(@PathVariable("idEvento") Integer idEvento);
 
 }
