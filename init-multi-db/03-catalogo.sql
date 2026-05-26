@@ -7,7 +7,7 @@
 -- 1. ELIMINACIÓN (Orden jerárquico inverso) 
 DROP TABLE IF EXISTS proy_recintos;
 DROP TABLE IF EXISTS proy_artistas;
-DROP TABLE IF EXISTS catalogo_eventos;
+DROP TABLE IF EXISTS eventos; --cambiado de catalogo_eventos a eventos
 DROP TABLE IF EXISTS generos;
 DROP TABLE IF EXISTS categorias;
 
@@ -28,8 +28,8 @@ CREATE TABLE generos (
     estado VARCHAR(20)
 );
 
-CREATE TABLE catalogo_eventos (
-    id_catalogo SERIAL PRIMARY KEY,
+CREATE TABLE eventos (              --cambiado de catalogo_eventos a eventos
+    id_evento SERIAL PRIMARY KEY,
     nombre_evento VARCHAR(100),
     categoria VARCHAR(50),
     fecha DATE,
@@ -66,7 +66,7 @@ INSERT INTO generos (nombre, descripcion, popularidad, estado) VALUES
 ('Indie', 'Producciones independientes y alternativas', 60, 'Activo');
 
 -- Catálogo de Eventos (La oferta disponible para el usuario)
-INSERT INTO catalogo_eventos (nombre_evento, categoria, fecha, estado) VALUES
+INSERT INTO eventos (nombre_evento, categoria, fecha, estado) VALUES
 ('Gira Ven Aquí - Los Bunkers', 'Masivos', '2025-12-15', 'Disponible'),
 ('Radical Optimism Tour - Dua Lipa', 'Masivos', '2026-03-10', 'Agotado'),
 ('Lollapalooza Chile 2026', 'Festivales', '2026-03-21', 'Preventa'),

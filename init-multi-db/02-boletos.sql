@@ -7,8 +7,8 @@
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar errores de FK)
 DROP TABLE IF EXISTS reservas;
-DROP TABLE IF EXISTS zonas;
 DROP TABLE IF EXISTS boletos;
+DROP TABLE IF EXISTS zonas;
 DROP TABLE IF EXISTS proy_eventos;
 DROP TABLE IF EXISTS proy_usuarios;
 
@@ -26,20 +26,22 @@ CREATE TABLE proy_eventos (
 );
 
 -- 3. CREACIÓN DE TABLAS MAESTRAS DEL MICROSERVICIO
-CREATE TABLE boletos (
-    id_boleto SERIAL PRIMARY KEY,
-    codigo VARCHAR(50),
-    tipo VARCHAR(50), -- Digital, Físico, VIP-Pass
-    estado VARCHAR(20), -- Disponible, Vendido, Reservado, Anulado
-    fecha_emision DATE
-);
-
 CREATE TABLE zonas (
     id_zona SERIAL PRIMARY KEY,
     nombre VARCHAR(50), -- VIP, Cancha General, Platea Alta
     capacidad INT,
     precio_base NUMERIC(10,2),
     estado VARCHAR(20) -- Activa, Agotada, En Mantenimiento
+);
+
+CREATE TABLE boletos (
+    id_boleto SERIAL PRIMARY KEY,
+    id_evento INT REFERENCES proy_eventos(id_evento), --agregado
+    id_zona INT REFERENCES zonas(id_zona),            --agregado
+    codigo VARCHAR(50),
+    tipo VARCHAR(50), -- Digital, Físico, VIP-Pass
+    estado VARCHAR(20), -- Disponible, Vendido, Reservado, Anulado
+    fecha_emision DATE
 );
 
 CREATE TABLE reservas (
@@ -70,12 +72,12 @@ INSERT INTO zonas (nombre, capacidad, precio_base, estado) VALUES
 ('Galería', 3000, 25000.00, 'Agotada');
 
 -- Poblamiento de Boletos
-INSERT INTO boletos (codigo, tipo, estado, fecha_emision) VALUES
-('TKT-LB-001', 'Digital', 'Vendido', '2025-05-01'), -- ID 1
-('TKT-LB-002', 'Digital', 'Disponible', '2025-05-01'), -- ID 2
-('TKT-DL-501', 'Físico', 'Reservado', '2025-05-10'), -- ID 3
-('TKT-DL-502', 'Digital', 'Vendido', '2025-05-10'), -- ID 4
-('TKT-GEN-999', 'Digital', 'Anulado', '2025-05-12'); -- ID 5
+INSERT INTO boletos (id_evento, id_zona, codigo, tipo, estado, fecha_emision) VALUES
+(1, 1, 'TKT-LB-001', 'Digital', 'Vendido', '2025-05-01'), -- ID 1
+(1, 2, 'TKT-LB-002', 'Digital', 'Disponible', '2025-05-01'), -- ID 2
+(1, 3, 'TKT-DL-501', 'Físico', 'Reservado', '2025-05-10'), -- ID 3
+(1, 4, 'TKT-DL-502', 'Digital', 'Vendido', '2025-05-10'), -- ID 4
+(2, 1, 'TKT-DL-999', 'Digital', 'Anulado', '2025-05-12'); -- ID 5
 
 -- Poblamiento de Reservas
 INSERT INTO reservas (id_boleto, fecha_reserva, estado, expiracion) VALUES

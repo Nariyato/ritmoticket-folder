@@ -8,7 +8,8 @@
       "cwd": "${workspaceFolder}/eureka",
       "mainClass": "cl.triskeledu.eureka.RitmoticketEurekaApplication",
       "projectName": "cl-triskeledu-eureka",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -17,7 +18,8 @@
       "cwd": "${workspaceFolder}/ms-artistas",
       "mainClass": "cl.triskeledu.artistas.RitmoticketArtistasApplication",
       "projectName": "cl-triskeledu-artistas",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -26,7 +28,8 @@
       "cwd": "${workspaceFolder}/ms-boletos",
       "mainClass": "cl.triskeledu.boletos.RitmoticketBoletosApplication",
       "projectName": "cl-triskeledu-boletos",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -35,7 +38,8 @@
       "cwd": "${workspaceFolder}/ms-catalogo",
       "mainClass": "cl.triskeledu.catalogo.RitmoticketCatalogoApplication",
       "projectName": "cl-triskeledu-catalogo",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -44,7 +48,8 @@
       "cwd": "${workspaceFolder}/ms-compras",
       "mainClass": "cl.triskeledu.compras.RitmoticketComprasApplication",
       "projectName": "cl-triskeledu-compras",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -53,7 +58,8 @@
       "cwd": "${workspaceFolder}/ms-notificaciones",
       "mainClass": "cl.triskeledu.notificaciones.RitmoticketNotificacionesApplication",
       "projectName": "cl-triskeledu-notificaciones",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -62,7 +68,8 @@
       "cwd": "${workspaceFolder}/ms-pagos",
       "mainClass": "cl.triskeledu.pagos.RitmoticketPagosApplication",
       "projectName": "cl-triskeledu-pagos",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -71,7 +78,8 @@
       "cwd": "${workspaceFolder}/ms-precios",
       "mainClass": "cl.triskeledu.precios.RitmoticketPreciosApplication",
       "projectName": "cl-triskeledu-precios",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -80,7 +88,8 @@
       "cwd": "${workspaceFolder}/ms-recintos",
       "mainClass": "cl.triskeledu.recintos.RitmoticketRecintosApplication",
       "projectName": "cl-triskeledu-recintos",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -89,7 +98,8 @@
       "cwd": "${workspaceFolder}/ms-reportes",
       "mainClass": "cl.triskeledu.reportes.RitmoticketReportesApplication",
       "projectName": "cl-triskeledu-reportes",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     },
     {
       "type": "java",
@@ -98,7 +108,8 @@
       "cwd": "${workspaceFolder}/ms-usuarios",
       "mainClass": "cl.triskeledu.usuarios.RitmoticketUsuariosApplication",
       "projectName": "cl-triskeledu-usuarios",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Dcom.sun.management.jmxremote=false"
     }
   ],
   "compounds": [
