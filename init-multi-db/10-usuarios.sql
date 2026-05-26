@@ -46,6 +46,8 @@ CREATE TABLE proy_compras (
 
 CREATE TABLE proy_boletos (
     id_boleto INT,
+    id_evento INT REFERENCES proy_eventos(id_evento), 
+    id_zona INT REFERENCES zonas(id_zona), 
     codigo VARCHAR(50),
     estado VARCHAR(20)
 );
@@ -83,7 +85,7 @@ INSERT INTO proy_compras (id_compra, total, estado) VALUES
 (2, 150000.00, 'Completada'),
 (3, 45000.00, 'Pendiente');
 
-INSERT INTO proy_boletos (id_boleto, codigo, estado) VALUES
-(1, 'TKT-LB-001', 'Vendido'),
-(3, 'TKT-DL-501', 'Reservado'),
-(4, 'TKT-DL-502', 'Vendido');
+INSERT INTO proy_boletos (id_boleto, id_evento, id_zona, codigo, estado) VALUES
+(1, 1, 1, 'TKT-LB-001', 'Vendido'),
+(3, 1, 3, 'TKT-DL-501', 'Reservado'),
+(4, 1, 4, 'TKT-DL-502', 'Vendido');

@@ -8,7 +8,7 @@
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar errores de FK)
 DROP TABLE IF EXISTS proy_precios;
 DROP TABLE IF EXISTS proy_recintos;
-DROP TABLE IF EXISTS eventos_artista;
+DROP TABLE IF EXISTS eventos_artista; --lista informativa para el perfil del artista, no es el creador oficial del evento
 DROP TABLE IF EXISTS albums;
 DROP TABLE IF EXISTS artistas;
 
