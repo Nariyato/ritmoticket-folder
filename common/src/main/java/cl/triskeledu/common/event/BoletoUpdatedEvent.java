@@ -18,4 +18,5 @@ public class BoletoUpdatedEvent implements BoletoEvent {
     private String estado;
 }
 
-//El evento más crítico. Viajará constantemente por Kafka cada vez que un boleto pase de "Disponible" a "Reservado" o "Vendido", o si se cancela una reserva "Anulado". Solo se incluyen los datos esenciales para que los demás microservicios puedan actualizar sus proyecciones.
+//El evento más crítico. Viajará constantemente por Kafka cada vez que un boleto pase de "Disponible" a "Reservado" o "Vendido", 
+//o si se cancela una reserva "Anulado". Solo se incluyen los datos esenciales para que los demás microservicios puedan actualizar sus proyecciones.
