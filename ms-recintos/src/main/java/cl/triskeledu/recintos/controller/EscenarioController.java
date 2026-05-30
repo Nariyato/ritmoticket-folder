@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/escenarios")
+@RequestMapping("/api/escenarios")
 public class EscenarioController {
 
     private final EscenarioService escenarioService;

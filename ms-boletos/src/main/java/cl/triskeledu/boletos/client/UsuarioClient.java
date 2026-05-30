@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface UsuarioClient {
 
     // Asumimos que el ms-usuarios tendrá un endpoint para verificar la existencia del usuario
-    @GetMapping("/api/v1/usuarios/{idUsuario}/existe")
+    @GetMapping("/api/usuarios/{idUsuario}/existe")
     boolean existsByUsuarioId(@PathVariable("idUsuario") Integer idUsuario);
 
 }

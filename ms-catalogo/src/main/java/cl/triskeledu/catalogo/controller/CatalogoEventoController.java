@@ -44,4 +44,10 @@ public class CatalogoEventoController {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    // Endpoint para verificar si existen eventos asociados a un ID de recinto
+    // @GetMapping("/recintos/{idRecinto}/existe")
+    // public ResponseEntity<Boolean> existeEventoParaRecinto(@PathVariable Integer idRecinto) {
+    //     return ResponseEntity.ok(service.existeEventoParaRecinto(idRecinto));
+    // }
 }

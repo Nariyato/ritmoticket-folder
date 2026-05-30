@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 // @RestController indica que esta clase recibirá peticiones web y devolverá datos
 // (generalmente en formato JSON)
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/boletos")
+@RequestMapping("/api/boletos")
 // @RequestMapping define la ruta base para todos los métodos de esta clase
 public class BoletoController {
 

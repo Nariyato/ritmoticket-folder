@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 // El nombre debe coincidir con cómo se registra el microservicio de catálogo en Eureka
 @FeignClient(name = "ms-catalogo")
+// @FeignClient le dice a Spring: "Genera el código para conectarte a este servicio externo"
 public interface CatalogoClient {
 
     // Asumimos que el ms-catalogo tendrá un endpoint para verificar la existencia del evento
-    @GetMapping("/api/v1/eventos/existe/idEvento/{idEvento}")
+    @GetMapping("/api/eventos/idEvento/{idEvento}")
     boolean existsByEventoId(@PathVariable("idEvento") Integer idEvento);
 
 }

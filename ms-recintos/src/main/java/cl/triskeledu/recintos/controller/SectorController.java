@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/sectores")
+@RequestMapping("/api/sectores")
 public class SectorController {
 
     private final SectorService sectorService;

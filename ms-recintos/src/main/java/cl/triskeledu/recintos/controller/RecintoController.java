@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/recintos")
+@RequestMapping("/api/recintos")
 public class RecintoController {
 
     private final RecintoService recintoService;
