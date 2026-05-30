@@ -6,24 +6,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class PrecioRequestDTO {
-    private Integer idCatalogo;
-    private String nombreEvento;
-    private String categoria;
-    private LocalDate fecha;
+    // private Integer idCatalogo;
+    // private String nombreEvento;
+    // private String categoria;
+    // private LocalDate fecha;
+
+    private String tipoBoleto;
+    private BigDecimal valor;
+    private String moneda;
     private String estado;
-    public BigDecimal getValor() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getValor'");
-    }
-    public Object getMoneda() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMoneda'");
-    }
+
+
 }

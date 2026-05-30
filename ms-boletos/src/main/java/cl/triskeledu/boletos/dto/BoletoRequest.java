@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 public class BoletoRequest {
 
     @NotNull(message = "El ID del evento es obligatorio")
-    private Integer idEvento;
+    private Integer idEvento; // mejor el nombre ¿
 
     @NotNull(message = "El ID de la zona es obligatorio")
-    private Integer idZona;
+    private Integer idZona; // mejor el nombre ¿
 
     @NotBlank(message = "El código del boleto es obligatorio")
     @Size(max = 50, message = "El código del boleto no puede superar los 50 caracteres")
@@ -30,5 +30,5 @@ public class BoletoRequest {
 
     @NotBlank(message = "El estado es obligatorio")
     @Size(max = 20, message = "El estado no puede superar los 20 caracteres")
-    private String estado;
+    private String estado; // no va ¿
 }

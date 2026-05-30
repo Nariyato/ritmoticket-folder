@@ -25,8 +25,4 @@ public class Precio {
     @Column(name = "estado", length = 20)
     private String estado;
 
-    public Integer getId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getId'");
-    }
 }

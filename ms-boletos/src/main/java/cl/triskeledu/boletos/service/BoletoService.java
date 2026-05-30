@@ -28,6 +28,7 @@ import cl.triskeledu.common.exception.*;
 public class BoletoService {
 
     private final BoletoRepository boletoRepository;
+    // Se Declara el repositorio a necesitar
     private final BoletoMapper boletoMapper;
     
    
@@ -41,6 +42,7 @@ public class BoletoService {
     }
 
     @Transactional
+    // @Transactional asegura que si algo falla a la mitad, la base de datos deshace los cambios.
     public BoletoResponse create(BoletoRequest request) {
         validateCodigoUnico(request.getCodigo());
 

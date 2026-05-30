@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+// @Entity le dice a JPA: "Esta clase no es normal, es una tabla de base de datos"
 @Table(name = "boletos")
+// @Table (Opcional) te permite elegir el nombre exacto de la tabla en Postgres
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,8 +18,11 @@ import java.util.Objects;
 public class Boleto {
 
     @Id
+    // @Id le dice a JPA que esta es la Clave Primaria (Primary Key)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // @GeneratedValue le dice a Postgres que genere el ID automáticamente (autoincremental)
     @Column(name = "id_boleto", nullable = false)
+    // @Column (Opcional) sirve para poner reglas a la columna
     private Integer idBoleto;
 
     @ManyToOne(fetch = FetchType.LAZY)

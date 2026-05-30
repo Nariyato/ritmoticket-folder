@@ -10,7 +10,7 @@ public class PrecioMapper {
 
     public PrecioResponseDTO toResponseDTO(Precio entity) {
     return PrecioResponseDTO.builder()
-            .id(entity.getId())
+            .id(entity.getIdPrecio())
             .valorBase(entity.getValor())
             // Si moneda es un objeto, usamos .toString() o .name()
             .moneda(entity.getMoneda() != null ? entity.getMoneda().toString() : null) 

@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BoletoResponse {
     private Integer idBoleto;
-    private Integer idEvento;
-    private Integer idZona;
+    private Integer idEvento; // nombre ¿
+    private Integer idZona; // nombre ¿
     private String codigo;
-    private String tipo;
-    private String estado;
+    private String tipo; 
+    private String estado; // tiene que estar¿
     private LocalDate fechaEmision;
 }

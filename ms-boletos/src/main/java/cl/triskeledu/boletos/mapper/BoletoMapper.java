@@ -10,6 +10,7 @@ import org.mapstruct.MappingTarget;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
+// @Mapper le dice a MapStruct que genere el código
 public interface BoletoMapper {
 
     // 1. Request -> Entidad (Para Guardar)
