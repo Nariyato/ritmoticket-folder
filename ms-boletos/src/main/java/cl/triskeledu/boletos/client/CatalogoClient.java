@@ -12,5 +12,6 @@ public interface CatalogoClient {
     // Asumimos que el ms-catalogo tendrá un endpoint para verificar la existencia del evento
     @GetMapping("/api/eventos/idEvento/{idEvento}")
     boolean existsByEventoId(@PathVariable("idEvento") Integer idEvento);
+    // Defines el método EXACTAMENTE igual a como está en el Controller del otro microservicio
 
 }

@@ -18,7 +18,7 @@ public class BoletoEventProducer {
 
     private static final String TOPIC_BASE = "boletos.boleto";
     private static final String ID_NOT_NULL = "El ID del boleto no puede ser null";
-    private static final String TOPIC_NOT_NULL = "El topic no puede ser null";
+    private static final String TOPIC_NOT_NULL = "El topic no puede ser null"; 
 
     private final KafkaTemplate<String, BoletoEvent> kafkaTemplate;
 
@@ -37,6 +37,8 @@ public class BoletoEventProducer {
         log.debug("********************");
         
         kafkaTemplate.send(topic, idBoleto, event);
+        // Avisamos al resto de la empresa que alguien compró algo
+        // No esperamos respuesta, solo "gritamos" el evento y seguimos con nuestra vida.
     }
 
     public void sendCreated(BoletoCreatedEvent event) {

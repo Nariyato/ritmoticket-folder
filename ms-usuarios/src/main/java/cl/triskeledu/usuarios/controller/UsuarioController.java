@@ -30,7 +30,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("id/{id}")
     public ResponseEntity<UsuarioResponse> findById(@PathVariable @NonNull Integer id) {
         return ResponseEntity.ok(usuarioService.findById(id));
     }

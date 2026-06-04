@@ -19,6 +19,7 @@ public class EventoEventConsumer {
     private final EventoProyeccionService eventoProyeccionService;
 
     @KafkaListener(
+    // Spring Boot mantiene un "oído" puesto en este tópico de Kafka
         topics = "catalogo.evento.created",
         groupId = "ms-boletos",
         properties = {"spring.json.value.default.type=cl.triskeledu.common.event.EventoCreatedEvent"}

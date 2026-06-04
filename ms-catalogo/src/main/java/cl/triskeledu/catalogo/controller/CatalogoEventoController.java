@@ -9,7 +9,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/catalogo")
+@RequestMapping("/api/v1/catalogo")
 public class CatalogoEventoController {
 
     private final CatalogoEventoService service;
@@ -50,4 +50,6 @@ public class CatalogoEventoController {
     // public ResponseEntity<Boolean> existeEventoParaRecinto(@PathVariable Integer idRecinto) {
     //     return ResponseEntity.ok(service.existeEventoParaRecinto(idRecinto));
     // }
+
+    
 }

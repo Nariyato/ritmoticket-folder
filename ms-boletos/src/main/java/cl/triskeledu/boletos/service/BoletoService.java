@@ -17,6 +17,8 @@ import cl.triskeledu.boletos.model.Boleto;
 import cl.triskeledu.boletos.repository.BoletoRepository;
 import cl.triskeledu.common.exception.*;
 
+// FALTA APLICAR LOS EVENTOS DEL KAFKA
+
 /**
  * Servicio encargado de aplicar las reglas de negocio de boletos:
  * - Gestiona operaciones CRUD, validaciones de negocio y de integridad.
