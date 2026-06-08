@@ -2,17 +2,14 @@ package cl.triskeledu.notificaciones.mapper;
 
 import cl.triskeledu.notificaciones.dto.CorreoRequest;
 import cl.triskeledu.notificaciones.model.Correo;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-
-public class CorreoMapper {
-    public Correo toEntity(CorreoRequest request) {
-        Correo correo = new Correo();
-        correo.setDestinatario(request.getDestinatario());
-        correo.setAsunto(request.getAsunto());
-        correo.setCuerpo(request.getCuerpo());
-        return correo;
-    }
+@Mapper(componentModel = "spring")
+public interface CorreoMapper {
+    @Mapping(target = "idCorreo", ignore = true)
+    @Mapping(target = "fecha", ignore = true)
+    @Mapping(target = "estado", ignore = true)
+    Correo toEntity(CorreoRequest request);
 
 }
