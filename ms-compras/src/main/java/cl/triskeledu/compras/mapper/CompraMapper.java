@@ -1,63 +1,31 @@
 package cl.triskeledu.compras.mapper;
 
-import cl.triskeledu.compras.dto.*;
+import cl.triskeledu.compras.dto.CompraRequest;
+import cl.triskeledu.compras.dto.CompraResponse;
+import cl.triskeledu.compras.dto.DetalleCompraRequest;
+import cl.triskeledu.compras.dto.DetalleCompraResponse;
 import cl.triskeledu.compras.model.Compra;
 import cl.triskeledu.compras.model.DetalleCompra;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import java.util.List;
-import java.util.stream.Collectors;
+@Mapper(componentModel = "spring")
+public interface CompraMapper {
+    // 1. Mapeo principal de la Compra
+    CompraResponse toResponse(Compra compra);
 
-@Component
+    @Mapping(target = "idCompra", ignore = true)
+    @Mapping(target = "fecha", ignore = true)
+    @Mapping(target = "estado", ignore = true)
+    @Mapping(target = "total", ignore = true)
+    @Mapping(target = "idUsuario", ignore = true)
+    Compra toEntity(CompraRequest request);
 
-public class CompraMapper {
-    public CompraResponse toResponse(Compra compra) {
-        if (compra == null) return null;
+    // 2. Mapeos individuales de los Detalles
+    DetalleCompraResponse toDetalleResponse(DetalleCompra detalle);
 
-        return CompraResponse.builder()
-                .idCompra(compra.getIdCompra())
-                // Convertimos el BigDecimal de la BD a Integer para el DTO
-                .total(compra.getTotal() != null ? compra.getTotal().intValue() : 0)
-                .estado(compra.getEstado() != null ? compra.getEstado().toString() : null)
-                .detalles(compra.getDetalles() != null ?
-                        compra.getDetalles().stream()
-                                .map(this::detalleToResponse)
-                                .collect(Collectors.toList())
-                        : null)
-                .build();
-    }
-
-    private DetalleCompraResponse detalleToResponse(DetalleCompra detalle) {
-        return DetalleCompraResponse.builder()
-                .idDetalle(detalle.getIdDetalle())
-                .idBoleto(detalle.getIdBoleto())
-                .cantidad(detalle.getCantidad())
-                // Se comenta precioUnitario ya que no existe en tu modelo DetalleCompra
-                // .precioUnitario(...) 
-                // Convertimos el subtotal BigDecimal a Integer
-                .subtotal(detalle.getSubtotal() != null ? detalle.getSubtotal().intValue() : 0)
-                .build();
-    }
-
-    public Compra toEntity(CompraRequest request) {
-        if (request == null) return null;
-
-        Compra compra = new Compra();
-
-        if (request.getDetalles() != null) {
-            List<DetalleCompra> detalles = request.getDetalles().stream()
-                    .map(dReq -> {
-                        DetalleCompra detalle = new DetalleCompra();
-                        detalle.setIdBoleto(dReq.getIdBoleto());
-                        detalle.setCantidad(dReq.getCantidad());
-                        return detalle;
-                    })
-                    .collect(Collectors.toList());
-
-            compra.setDetalles(detalles);
-        }
-
-        return compra;
-    }
-
+    @Mapping(target = "idDetalle", ignore = true)
+    @Mapping(target = "compra", ignore = true)
+    @Mapping(target = "subtotal", ignore = true)
+    DetalleCompra toDetalleEntity(DetalleCompraRequest detalleRequest);
 }
