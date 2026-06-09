@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class CatalogoEventoRequestDTO {
+public class EventoRequestDTO {
     @NotBlank(message = "El nombre del evento es obligatorio")
     @Size(min = 3, max = 100)
     private String nombreEvento;
@@ -15,4 +15,6 @@ public class CatalogoEventoRequestDTO {
     private LocalDate fecha;
     @NotBlank(message = "El estado es obligatorio")
     private String estado;
+    private Integer idArtista;
+    private Integer idRecinto;
 }

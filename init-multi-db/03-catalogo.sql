@@ -33,7 +33,9 @@ CREATE TABLE eventos (              --cambiado de catalogo_eventos a eventos
     nombre_evento VARCHAR(100),
     categoria VARCHAR(50),
     fecha DATE,
-    estado VARCHAR(20)
+    estado VARCHAR(20),
+    id_artista INT,
+    id_recinto INT
 );
 
 -- 3. CREACIÓN DE TABLAS DE PROYECCIÓN 

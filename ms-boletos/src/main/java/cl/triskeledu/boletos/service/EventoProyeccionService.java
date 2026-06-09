@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-import cl.triskeledu.boletos.client.CatalogoClient; // Asegúrate de tener este cliente configurado
 import cl.triskeledu.boletos.dto.ProyEventoResponse;
 import cl.triskeledu.boletos.mapper.ProyEventoMapper;
 import cl.triskeledu.boletos.model.ProyEvento;
@@ -17,13 +17,13 @@ import cl.triskeledu.boletos.repository.ProyEventoRepository;
 import cl.triskeledu.common.exception.EntityNotFoundException;
 import cl.triskeledu.common.exception.ReferentialIntegrityException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventoProyeccionService {
 
     private final ProyEventoRepository proyEventoRepository;
     private final BoletoRepository boletoRepository;
-    private final CatalogoClient catalogoClient; // Cliente para validaciones remotas
     private final ProyEventoMapper proyEventoMapper;
 
     @Transactional
@@ -33,22 +33,24 @@ public class EventoProyeccionService {
 
     @Transactional
     public void save(Integer idEvento, String nombreEvento, LocalDate fecha) {
-        ProyEvento evento = ProyEvento.builder()
-                .idEvento(idEvento)
-                .nombreEvento(nombreEvento)
-                .fecha(fecha)
-                .build();
+        ProyEvento evento = proyEventoRepository.findById(idEvento)
+                .orElse(ProyEvento.builder().idEvento(idEvento).build());
+        evento.setNombreEvento(nombreEvento);
+        if (fecha != null) {
+            evento.setFecha(fecha);
+        }
         proyEventoRepository.save(evento);
     }
 
-    /**
-     * Sobrecarga del método save para cuando no recibes la fecha desde el evento.
-     * Utiliza LocalDate.now() por defecto.
-     */
     @Transactional
-    public void save(Integer idEvento, String nombreEvento) {
-        // Llama al método original pasando una fecha por defecto (hoy)
-        this.save(idEvento, nombreEvento, LocalDate.now());
+    public void eliminarProyeccion(Integer id) {
+        proyEventoRepository.findById(id).ifPresent(evento -> {
+            if (boletoRepository.existsByEventoIdEvento(id)) {
+                log.warn("No se elimina la proyección del evento {}: tiene boletos locales", id);
+                return;
+            }
+            proyEventoRepository.delete(evento);
+        });
     }
 
     @Transactional
@@ -58,18 +60,10 @@ public class EventoProyeccionService {
 
         List<String> tablasAsociadas = new ArrayList<>();
 
-        // 1. Validación local: Verificar si hay boletos emitidos para este evento
         if (boletoRepository.existsByEventoIdEvento(id)) {
             tablasAsociadas.add("Boletos emitidos localmente");
         }
 
-        // 2. Validación externa: Verificar si el evento existe o está activo en el microservicio origen
-        // Esto asume que el cliente tiene un método para verificar existencia o uso
-        if (catalogoClient.existsByEventoId(id)) {
-            tablasAsociadas.add("Eventos activos en Catálogo");
-        }
-
-        // Si hay dependencias, lanzamos la excepción
         if (!tablasAsociadas.isEmpty()) {
             throw new ReferentialIntegrityException("Evento Proyección", id, String.join(", ", tablasAsociadas));
         }

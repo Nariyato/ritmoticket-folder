@@ -5,13 +5,13 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "catalogo_eventos")
+@Table(name = "eventos")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class CatalogoEvento {
+public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_catalogo", nullable = false)
-    private Integer idCatalogo;
+    @Column(name = "id_evento", nullable = false)
+    private Integer idEvento;
 
     @Column(name = "nombre_evento", length = 100)
     private String nombreEvento;
@@ -24,4 +24,13 @@ public class CatalogoEvento {
 
     @Column(name = "estado", length = 20)
     private String estado;
+
+    // para generar los endpoints de artistas y recintos
+
+    @Column(name = "id_artista")
+    private Integer idArtista;
+
+    @Column(name = "id_recinto")
+    private Integer idRecinto;
+
 }

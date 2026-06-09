@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "ms-catalogo") 
 public interface CatalogoClient {
 
-    // Endpoint para consultar si existen eventos asociados a este ID de recinto
-    @GetMapping("/api/catalogo/recintos/{idRecinto}/existe")
-    boolean existsByRecintoId(@PathVariable("idRecinto") Long idRecinto);
+    @GetMapping("/api/v1/catalogo/recintos/existe/idRecinto/{idRecinto}")
+    boolean existsByRecintoId(@PathVariable("idRecinto") Integer idRecinto);
 
-    // se debe crear el metodo en el controller de ms-catalogo para que este endpoint funcione
 }

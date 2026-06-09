@@ -8,11 +8,6 @@ import org.springframework.stereotype.Service;
 import cl.triskeledu.artistas.client.CatalogoClient;
 import cl.triskeledu.artistas.dto.ArtistaRequest;
 import cl.triskeledu.artistas.dto.ArtistaResponse;
-// Descomenta estas importaciones cuando implementes la mensajería asíncrona
-// import cl.triskeledu.artistas.event.ArtistaEventProducer;
-// import cl.triskeledu.common.event.ArtistaCreatedEvent;
-// import cl.triskeledu.common.event.ArtistaDeletedEvent;
-// import cl.triskeledu.common.event.ArtistaUpdatedEvent;
 import cl.triskeledu.common.exception.*;
 import cl.triskeledu.artistas.mapper.ArtistaMapper;
 import cl.triskeledu.artistas.model.Album;
@@ -40,10 +35,7 @@ public class ArtistaService {
 
     // Agrega esta línea para inyectar el Feign Client
     private final CatalogoClient catalogoClient;
-    
-    // Descomentar cuando tengas el productor de eventos configurado
-    // private final ArtistaEventProducer artistaEventProducer;
-    
+
     // Si necesitas validar cosas en otro microservicio (ej. recintos o boletos), 
     // aquí inyectarías tu Feign Client (equivalente al RecursoClient).
 
@@ -65,10 +57,6 @@ public class ArtistaService {
         Artista artista = new Artista();  
         artistaMapper.updateEntity(request, artista);
         artistaRepository.save(artista);
-        
-        // Descomentar cuando tengas la mensajería
-        // ArtistaCreatedEvent event = new ArtistaCreatedEvent(artista.getNombreArtistico(), artista.getPais());
-        // artistaEventProducer.sendCreated(event);
         
         return artistaMapper.toResponse(artista);
     }
@@ -111,10 +99,6 @@ public class ArtistaService {
         artistaMapper.updateEntity(request, artista);
         artistaRepository.save(artista);
         
-        // Descomentar cuando tengas la mensajería
-        // ArtistaUpdatedEvent event = new ArtistaUpdatedEvent(artista.getNombreArtistico(), artista.getPais());
-        // artistaEventProducer.sendUpdated(event);
-        
         return artistaMapper.toResponse(artista);
     }
 
@@ -143,11 +127,6 @@ public class ArtistaService {
         
         // Si pasa todas las validaciones, se elimina el artista
         artistaRepository.delete(artista);
-    
-        
-        // Descomentar cuando tengas la mensajería
-        // ArtistaDeletedEvent event = new ArtistaDeletedEvent(artista.getNombreArtistico());
-        // artistaEventProducer.sendDeleted(event);
     }
 
     @Transactional
