@@ -1,7 +1,27 @@
+cl\triskeledu\common\event\EventoUpdatedEvent$EventoUpdatedEventBuilder.class
 cl\triskeledu\common\exception\EntityNotFoundException.class
+cl\triskeledu\common\event\BoletoEvent.class
 cl\triskeledu\common\exception\ApiError$ApiErrorBuilder.class
+<<<<<<< HEAD
+=======
+cl\triskeledu\common\event\BoletoCreatedEvent$BoletoCreatedEventBuilder.class
+cl\triskeledu\common\event\BoletoCreatedEvent.class
+cl\triskeledu\common\event\EventoCreatedEvent.class
+>>>>>>> f2742418fa975923d864a27478a739bbe0e41198
 cl\triskeledu\common\exception\DuplicateResourceException.class
+cl\triskeledu\common\event\EventoDeletedEvent$EventoDeletedEventBuilder.class
+cl\triskeledu\common\event\BoletoUpdatedEvent$BoletoUpdatedEventBuilder.class
 cl\triskeledu\common\exception\ApiError.class
 cl\triskeledu\common\exception\ReferentialIntegrityException.class
+<<<<<<< HEAD
 cl\triskeledu\common\CommonAutoConfiguration.class
 cl\triskeledu\common\exception\GlobalExceptionHandler.class
+=======
+cl\triskeledu\common\event\BoletoUpdatedEvent.class
+cl\triskeledu\common\CommonAutoConfiguration.class
+cl\triskeledu\common\event\EventoEvent.class
+cl\triskeledu\common\exception\GlobalExceptionHandler.class
+cl\triskeledu\common\event\EventoCreatedEvent$EventoCreatedEventBuilder.class
+cl\triskeledu\common\event\EventoUpdatedEvent.class
+cl\triskeledu\common\event\EventoDeletedEvent.class
+>>>>>>> f2742418fa975923d864a27478a739bbe0e41198
