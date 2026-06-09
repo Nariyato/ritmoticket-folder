@@ -44,6 +44,15 @@ public class BoletoService {
     }
 
     @Transactional
+    public Integer obtenerPrecio(Integer id) {
+        Boleto boleto = getBoletoById(id);
+        if (boleto.getZona() == null || boleto.getZona().getPrecioBase() == null) {
+            throw new EntityNotFoundException("Boletos", "precio para ID", id.toString());
+        }
+        return boleto.getZona().getPrecioBase().intValue();
+    }
+
+    @Transactional
     // @Transactional asegura que si algo falla a la mitad, la base de datos deshace los cambios.
     public BoletoResponse create(BoletoRequest request) {
         validateCodigoUnico(request.getCodigo());

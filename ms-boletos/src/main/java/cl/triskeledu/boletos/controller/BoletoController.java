@@ -41,6 +41,11 @@ public class BoletoController {
         return ResponseEntity.ok(boletoService.findById(id));
     }
 
+    @GetMapping("/{id}/precio")
+    public ResponseEntity<Integer> obtenerPrecio(@PathVariable @NonNull Integer id) {
+        return ResponseEntity.ok(boletoService.obtenerPrecio(id));
+    }
+
     @PostMapping
     public ResponseEntity<BoletoResponse> create(@Valid @RequestBody BoletoRequest request) {
         BoletoResponse creado = boletoService.create(request);

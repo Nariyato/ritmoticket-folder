@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "MS-PAGOS")
+@FeignClient(name = "ms-pagos")
 
 public interface PagoClient {
         // Servirá para avisarle a ms-pagos que cobre la compra

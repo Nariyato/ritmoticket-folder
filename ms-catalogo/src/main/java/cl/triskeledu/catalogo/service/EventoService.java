@@ -11,6 +11,6 @@ public interface EventoService {
     EventoResponseDTO actualizar(Integer id, EventoRequestDTO request);
     void eliminar(Integer id);
     boolean existePorArtista(Integer idArtista);
-    boolean existePorRecinto(Long idRecinto);
+    boolean existePorRecinto(Integer idRecinto);
     boolean existePorId(Integer idEvento);
 }
