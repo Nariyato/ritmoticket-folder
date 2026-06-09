@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface CatalogoClient {
 
     @GetMapping("/api/v1/catalogo/recintos/existe/idRecinto/{idRecinto}")
-    boolean existsByRecintoId(@PathVariable("idRecinto") Integer idRecinto);
+    boolean existsByRecintoId(@PathVariable("idRecinto") Long idRecinto);
 
 }

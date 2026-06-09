@@ -96,7 +96,7 @@ public class EventoServiceImpl implements EventoService {
     }
 
     @Override
-    public boolean existePorRecinto(Integer idRecinto) {
+    public boolean existePorRecinto(Long idRecinto) {
         return repository.existsByIdRecinto(idRecinto);
     }
 
