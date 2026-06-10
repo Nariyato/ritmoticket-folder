@@ -18,6 +18,5 @@ public interface EventoMapper {
 
     List<EventoResponseDTO> toResponseList(List<Evento> eventos);
 
-    @Mapping(target = "idEvento", ignore = true)
     void updateFromRequest(EventoRequestDTO request, @MappingTarget Evento entity);
 }
