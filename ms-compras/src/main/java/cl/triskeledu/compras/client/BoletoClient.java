@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface BoletoClient {
 
         // Servirá para ir a buscar el precio real del boleto al ms-boletos
-    @GetMapping("/api/boletos/{id}/precio")
+    @GetMapping("/api/v1/boletos/precio/id/{id}")
     Integer obtenerPrecioBoleto(@PathVariable("id") Integer id);
 
 }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/correos")
+@RequestMapping("/api/v1/correos")
 @RequiredArgsConstructor
 
 public class CorreoController {

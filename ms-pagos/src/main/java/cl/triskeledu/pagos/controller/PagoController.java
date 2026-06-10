@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/pagos")
+@RequestMapping("/api/v1/pagos")
 @RequiredArgsConstructor
 
 public class PagoController {
@@ -30,7 +30,7 @@ private final PagoService pagoService;
         return ResponseEntity.ok(responseList);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<PagoResponse> buscarPorId(@PathVariable Integer id) {
         return pagoService.buscarPorId(id)
                 .map(pago -> ResponseEntity.ok(pagoMapper.toResponse(pago)))
@@ -45,7 +45,7 @@ private final PagoService pagoService;
                              .body(pagoMapper.toResponse(pagoGuardado));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         pagoService.eliminar(id);
         return ResponseEntity.noContent().build();

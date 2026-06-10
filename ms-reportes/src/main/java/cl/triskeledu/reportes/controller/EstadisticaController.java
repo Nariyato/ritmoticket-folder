@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/estadisticas")
+@RequestMapping("/api/v1/estadisticas")
 @RequiredArgsConstructor
 
 public class EstadisticaController {

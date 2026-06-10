@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/v1/usuarios")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -30,7 +30,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    @GetMapping("id/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<UsuarioResponse> findById(@PathVariable @NonNull Integer id) {
         return ResponseEntity.ok(usuarioService.findById(id));
     }
@@ -46,14 +46,14 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<UsuarioResponse> update(
             @PathVariable @NonNull Integer id,
             @Valid @RequestBody UsuarioRequest request) {
         return ResponseEntity.ok(usuarioService.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable @NonNull Integer id) {
         usuarioService.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -63,7 +63,7 @@ public class UsuarioController {
     // ENDPOINTS PARA SUB-RECURSOS (Perfiles y Direcciones)
     // ==========================================
 
-    @PostMapping("/{idUsuario}/perfiles")
+    @PostMapping("/perfiles/idUsuario/{idUsuario}")
     public ResponseEntity<PerfilResponse> addPerfilAUsuario(
             @PathVariable @NonNull Integer idUsuario,
             @Valid @RequestBody PerfilRequest request) {
@@ -71,7 +71,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PostMapping("/{idUsuario}/direcciones")
+    @PostMapping("/direcciones/idUsuario/{idUsuario}")
     public ResponseEntity<DireccionResponse> addDireccionAUsuario(
             @PathVariable @NonNull Integer idUsuario,
             @Valid @RequestBody DireccionRequest request) {

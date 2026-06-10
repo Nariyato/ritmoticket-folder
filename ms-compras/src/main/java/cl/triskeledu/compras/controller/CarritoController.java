@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/carritos")
+@RequestMapping("/api/v1/carritos")
 @RequiredArgsConstructor
 
 public class CarritoController {
@@ -18,13 +18,13 @@ public class CarritoController {
     private final CarritoService carritoService;
     private final CarritoMapper carritoMapper;
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<CarritoResponse> obtenerCarrito(@PathVariable("id") Integer id) {
         Carrito carrito = carritoService.buscarPorId(id);
         return ResponseEntity.ok(carritoMapper.toResponse(carrito));
     }
 
-    @PostMapping("/{id}/boletos")
+    @PostMapping("/boletos/id/{id}")
     public ResponseEntity<CarritoResponse> agregarBoleto(
             @PathVariable("id") Integer id, 
             @RequestBody AgregarBoletoRequest request) {
@@ -35,7 +35,7 @@ public class CarritoController {
         return ResponseEntity.ok(carritoMapper.toResponse(carritoActualizado));
     }
 
-    @DeleteMapping("/{id}/vaciar")
+    @DeleteMapping("/vaciar/id/{id}")
     public ResponseEntity<CarritoResponse> vaciarCarrito(@PathVariable("id") Integer id) {
         Carrito carritoVacio = carritoService.vaciarCarrito(id);
         return ResponseEntity.ok(carritoMapper.toResponse(carritoVacio));

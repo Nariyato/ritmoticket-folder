@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/compras")
+@RequestMapping("/api/v1/compras")
 @RequiredArgsConstructor
 
 public class CompraController {

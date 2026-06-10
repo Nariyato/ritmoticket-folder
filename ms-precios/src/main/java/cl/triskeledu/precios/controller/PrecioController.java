@@ -10,7 +10,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/precios")
+@RequestMapping("/api/v1/precios")
 @RequiredArgsConstructor
 public class PrecioController {
 
@@ -21,7 +21,7 @@ public class PrecioController {
         return ResponseEntity.ok(service.obtenerTodos());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<PrecioResponseDTO> obtener(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
@@ -31,7 +31,7 @@ public class PrecioController {
         return ResponseEntity.ok(service.guardar(dto));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable("id") Integer id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();

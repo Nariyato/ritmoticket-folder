@@ -22,7 +22,7 @@ public class EventoController {
         return ResponseEntity.ok(service.obtenerTodos());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<EventoResponseDTO> obtener(@PathVariable Integer id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
@@ -32,14 +32,14 @@ public class EventoController {
         return ResponseEntity.ok(service.crear(request));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<EventoResponseDTO> actualizar(
             @PathVariable Integer id,
             @Valid @RequestBody EventoRequestDTO request) {
         return ResponseEntity.ok(service.actualizar(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();

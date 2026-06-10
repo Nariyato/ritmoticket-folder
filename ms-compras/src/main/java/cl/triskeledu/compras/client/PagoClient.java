@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface PagoClient {
         // Servirá para avisarle a ms-pagos que cobre la compra
-    @PostMapping("/api/pagos/iniciar")
+    @PostMapping("/api/v1/pagos/iniciar")
     void iniciarPago(@RequestBody Object requestPago);
 
 }

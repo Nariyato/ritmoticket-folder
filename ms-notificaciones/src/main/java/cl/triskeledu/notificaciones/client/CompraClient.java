@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "ms-compras")
 
     public interface CompraClient {
-    @GetMapping("/api/compras/{id}")
+    @GetMapping("/api/v1/compras/id/{id}")
     Object obtenerCompra(@PathVariable("id") Integer id);
 
 }

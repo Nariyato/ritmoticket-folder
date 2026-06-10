@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/escenarios")
+@RequestMapping("/api/v1/escenarios")
 public class EscenarioController {
 
     private final EscenarioService escenarioService;
@@ -26,13 +26,13 @@ public class EscenarioController {
         return ResponseEntity.ok(escenarioService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<EscenarioResponse> findById(@PathVariable @NonNull Long id) {
         return ResponseEntity.ok(escenarioService.findById(id));
     }
 
     // Endpoint clave para buscar qué escenarios tiene un recinto
-    @GetMapping("/recinto/{idRecinto}")
+    @GetMapping("/idRecinto/{idRecinto}")
     public ResponseEntity<List<EscenarioResponse>> findByRecintoId(@PathVariable @NonNull Long idRecinto) {
         return ResponseEntity.ok(escenarioService.findByRecintoId(idRecinto));
     }
@@ -43,14 +43,14 @@ public class EscenarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<EscenarioResponse> update(
             @PathVariable @NonNull Long id,
             @Valid @RequestBody EscenarioRequest request) {
         return ResponseEntity.ok(escenarioService.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable @NonNull Long id) {
         escenarioService.deleteById(id);
         return ResponseEntity.noContent().build();

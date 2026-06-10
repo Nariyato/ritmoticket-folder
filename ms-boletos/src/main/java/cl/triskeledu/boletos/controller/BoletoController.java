@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 // @RestController indica que esta clase recibirá peticiones web y devolverá datos
 // (generalmente en formato JSON)
 @RequiredArgsConstructor
-@RequestMapping("/api/boletos")
+@RequestMapping("/api/v1/boletos")
 // @RequestMapping define la ruta base para todos los métodos de esta clase
 public class BoletoController {
 
@@ -36,12 +36,12 @@ public class BoletoController {
         return ResponseEntity.ok(boletoService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<BoletoResponse> findById(@PathVariable @NonNull Integer id) {
         return ResponseEntity.ok(boletoService.findById(id));
     }
 
-    @GetMapping("/{id}/precio")
+    @GetMapping("/precio/id/{id}")
     public ResponseEntity<Integer> obtenerPrecio(@PathVariable @NonNull Integer id) {
         return ResponseEntity.ok(boletoService.obtenerPrecio(id));
     }
@@ -52,14 +52,14 @@ public class BoletoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<BoletoResponse> update(
             @PathVariable @NonNull Integer id,
             @Valid @RequestBody BoletoRequest request) {
         return ResponseEntity.ok(boletoService.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable @NonNull Integer id) {
         boletoService.deleteById(id);
         return ResponseEntity.noContent().build();

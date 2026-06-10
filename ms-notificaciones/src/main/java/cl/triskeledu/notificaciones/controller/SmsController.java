@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/sms") // Endpoint asociado a sms [cite: 13]
+@RequestMapping("/api/v1/sms") // Endpoint asociado a sms [cite: 13]
 @RequiredArgsConstructor
 
 public class SmsController {
@@ -22,7 +22,7 @@ public class SmsController {
         return ResponseEntity.ok(smsService.listarTodos());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<Sms> buscarPorId(@PathVariable Integer id) {
         return smsService.buscarPorId(id)
                 .map(ResponseEntity::ok)
@@ -34,7 +34,7 @@ public class SmsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(smsService.guardar(sms));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         smsService.eliminar(id);
         return ResponseEntity.noContent().build();
