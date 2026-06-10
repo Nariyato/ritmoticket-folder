@@ -68,17 +68,18 @@ INSERT INTO generos (nombre, descripcion, popularidad, estado) VALUES
 ('Indie', 'Producciones independientes y alternativas', 60, 'Activo');
 
 -- Catálogo de Eventos (La oferta disponible para el usuario)
-INSERT INTO eventos (nombre_evento, categoria, fecha, estado) VALUES
-('Gira Ven Aquí - Los Bunkers', 'Masivos', '2025-12-15', 'Disponible'),
-('Radical Optimism Tour - Dua Lipa', 'Masivos', '2026-03-10', 'Agotado'),
-('Lollapalooza Chile 2026', 'Festivales', '2026-03-21', 'Preventa'),
-('Autopoiética Tour - Mon Laferte', 'Íntimos', '2025-11-20', 'Disponible');
+INSERT INTO eventos (nombre_evento, categoria, fecha, estado, id_artista, id_recinto) VALUES
+('Gira Ven Aquí - Los Bunkers', 'Masivos', '2025-12-15', 'Disponible', 1, 101),
+('Radical Optimism Tour - Dua Lipa', 'Masivos', '2026-03-10', 'Agotado', 2, 102),
+('Lollapalooza Chile 2026', 'Festivales', '2026-03-21', 'Preventa', 5, 103),
+('Autopoiética Tour - Mon Laferte', 'Íntimos', '2025-11-20', 'Disponible', 4, 103);
 
 -- Poblamiento de Proyecciones (Referencias cruzadas con otros microservicios)
 INSERT INTO proy_artistas (id_artista, nombre_artistico, genero) VALUES
 (1, 'Los Bunkers', 'Rock Latino'),
 (2, 'Dua Lipa', 'Pop Internacional'),
-(4, 'Mon Laferte', 'Indie');
+(4, 'Mon Laferte', 'Indie'),
+(5, 'Metallica', 'Heavy Metal');
 
 INSERT INTO proy_recintos (id_recinto, nombre, ciudad) VALUES
 (101, 'Estadio Nacional', 'Santiago'),

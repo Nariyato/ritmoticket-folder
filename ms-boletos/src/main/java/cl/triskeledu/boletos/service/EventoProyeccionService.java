@@ -32,6 +32,13 @@ public class EventoProyeccionService {
     }
 
     @Transactional
+    public ProyEventoResponse findById(Integer id) {
+        return proyEventoRepository.findById(id)
+                .map(proyEventoMapper::toResponse)
+                .orElseThrow(() -> new EntityNotFoundException("Evento Proyección", "ID", id.toString()));
+    }
+
+    @Transactional
     public void save(Integer idEvento, String nombreEvento, LocalDate fecha) {
         ProyEvento evento = proyEventoRepository.findById(idEvento)
                 .orElse(ProyEvento.builder().idEvento(idEvento).build());
