@@ -31,6 +31,6 @@ public class Evento {
     private Integer idArtista;
 
     @Column(name = "id_recinto")
-    private Integer idRecinto;
+    private Long idRecinto;
 
 }

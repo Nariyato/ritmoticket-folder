@@ -1,1 +1,1 @@
-docker stop postgres-db
+docker stop postgres_rdbms

@@ -1,1 +1,1 @@
-docker start postgres-db
+docker start postgres_rdbms

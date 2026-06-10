@@ -17,7 +17,7 @@ public class Escenario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_escenario", nullable = false)
-    private Integer idEscenario;
+    private Long idEscenario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_recinto")

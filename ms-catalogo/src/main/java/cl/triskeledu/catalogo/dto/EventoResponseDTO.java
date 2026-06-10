@@ -11,5 +11,5 @@ public class EventoResponseDTO {
     private LocalDate fecha;
     private String estado;
     private Integer idArtista;
-    private Integer idRecinto;
+    private Long idRecinto;
 }

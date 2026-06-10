@@ -51,7 +51,7 @@ public class EventoController {
     }
 
     @GetMapping("/recintos/existe/idRecinto/{idRecinto}")
-    public ResponseEntity<Boolean> existePorRecinto(@PathVariable Integer idRecinto) {
+    public ResponseEntity<Boolean> existePorRecinto(@PathVariable Long idRecinto) {
         return ResponseEntity.ok(service.existePorRecinto(idRecinto));
     }
 

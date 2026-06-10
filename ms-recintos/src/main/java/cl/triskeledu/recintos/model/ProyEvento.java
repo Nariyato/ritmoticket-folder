@@ -5,17 +5,17 @@ import lombok.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "proy_catalogo")
+@Table(name = "proy_eventos")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProyCatalogo {
+public class ProyEvento {
 
     @Id
-    @Column(name = "id_catalogo", nullable = false)
-    private Integer idCatalogo;
+    @Column(name = "id_evento", nullable = false)
+    private Integer idEvento;
 
     @Column(name = "nombre_evento", length = 100)
     private String nombreEvento;
@@ -27,12 +27,12 @@ public class ProyCatalogo {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProyCatalogo that = (ProyCatalogo) o;
-        return Objects.equals(idCatalogo, that.idCatalogo);
+        ProyEvento that = (ProyEvento) o;
+        return Objects.equals(idEvento, that.idEvento);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCatalogo);
+        return Objects.hash(idEvento);
     }
 }

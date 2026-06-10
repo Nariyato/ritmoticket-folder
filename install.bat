@@ -9,7 +9,7 @@ rmdir /s /q %USERPROFILE%\.m2
 
 REM Paso 2: Eliminar carpetas target de los proyectos
 echo Eliminando carpetas target ...
-rmdir /s /q C:\rimtoticket-folder\eureka\target
+rmdir /s /q C:\ritmoticket-folder\eureka\target
 rmdir /s /q C:\rimtoticket-folder\ms-artistas\target
 rmdir /s /q C:\rimtoticket-folder\ms-boletos\target
 rmdir /s /q C:\rimtoticket-folder\ms-catalogo\target
