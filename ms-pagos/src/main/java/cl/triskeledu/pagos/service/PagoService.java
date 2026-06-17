@@ -1,5 +1,7 @@
 package cl.triskeledu.pagos.service;
 
+import cl.triskeledu.common.event.PagoCreatedEvent;
+import cl.triskeledu.pagos.event.PagoEventProducer;
 import cl.triskeledu.pagos.model.Pago;
 import cl.triskeledu.pagos.repository.PagoRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.Optional;
 public class PagoService {
 
 private final PagoRepository pagoRepository;
+    private final PagoEventProducer pagoEventProducer;
 
     @Transactional(readOnly = true)
     public List<Pago> listarTodos() { 
@@ -27,8 +30,17 @@ private final PagoRepository pagoRepository;
     }
 
     @Transactional
-    public Pago guardar(Pago pago) { 
-        return pagoRepository.save(pago); 
+    public Pago guardar(Pago pago) {
+        Pago guardado = pagoRepository.save(pago);
+
+        pagoEventProducer.sendCreated(PagoCreatedEvent.builder()
+                .idPago(guardado.getIdPago())
+                .monto(guardado.getMonto())
+                .metodo(guardado.getMetodo() != null ? guardado.getMetodo().name() : null)
+                .estado(guardado.getEstado() != null ? guardado.getEstado().name() : null)
+                .build());
+
+        return guardado;
     }
 
     @Transactional

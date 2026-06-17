@@ -12,12 +12,13 @@ import lombok.RequiredArgsConstructor;
 import cl.triskeledu.boletos.dto.BoletoRequest;
 import cl.triskeledu.boletos.dto.BoletoResponse;
 
+import cl.triskeledu.boletos.event.BoletoEventProducer;
 import cl.triskeledu.boletos.mapper.BoletoMapper;
 import cl.triskeledu.boletos.model.Boleto;
 import cl.triskeledu.boletos.repository.BoletoRepository;
+import cl.triskeledu.common.event.BoletoCreatedEvent;
+import cl.triskeledu.common.event.BoletoUpdatedEvent;
 import cl.triskeledu.common.exception.*;
-
-// FALTA APLICAR LOS EVENTOS DEL KAFKA
 
 /**
  * Servicio encargado de aplicar las reglas de negocio de boletos:
@@ -32,8 +33,7 @@ public class BoletoService {
     private final BoletoRepository boletoRepository;
     // Se Declara el repositorio a necesitar
     private final BoletoMapper boletoMapper;
-    
-   
+    private final BoletoEventProducer boletoEventProducer;
 
     public List<BoletoResponse> findAll() {
         return boletoMapper.toResponseList(boletoRepository.findAll());
@@ -65,6 +65,13 @@ public class BoletoService {
 
         boletoRepository.save(boleto);
 
+        boletoEventProducer.sendCreated(BoletoCreatedEvent.builder()
+                .idBoleto(boleto.getIdBoleto())
+                .idEvento(boleto.getEvento().getIdEvento())
+                .idZona(boleto.getZona().getIdZona())
+                .codigo(boleto.getCodigo())
+                .estado(boleto.getEstado())
+                .build());
 
         return boletoMapper.toResponse(boleto);
     }
@@ -79,6 +86,13 @@ public class BoletoService {
         Boleto boleto = getBoletoById(id);
         boletoMapper.updateFromRequest(request, boleto);
         boletoRepository.save(boleto);
+
+        boletoEventProducer.sendUpdated(BoletoUpdatedEvent.builder()
+                .idBoleto(boleto.getIdBoleto())
+                .idEvento(boleto.getEvento().getIdEvento())
+                .codigo(boleto.getCodigo())
+                .estado(boleto.getEstado())
+                .build());
 
         return boletoMapper.toResponse(boleto);
     }

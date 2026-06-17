@@ -12,11 +12,17 @@ import lombok.*;
 @Builder
 
 public class ProyBoleto {
-@Id // [cite: 8]
-    @Column(name = "id_boleto", nullable = false) // [cite: 8]
+    @Id
+    @Column(name = "id_boleto", nullable = false)
     private Integer idBoleto;
 
-    @Column(name = "codigo", length = 50) // [cite: 8]
+    @Column(name = "id_evento")
+    private Integer idEvento;
+
+    @Column(name = "id_zona")
+    private Integer idZona;
+
+    @Column(name = "codigo", length = 50)
     private String codigo;
 
     @Column(name = "estado", length = 20) // [cite: 8]

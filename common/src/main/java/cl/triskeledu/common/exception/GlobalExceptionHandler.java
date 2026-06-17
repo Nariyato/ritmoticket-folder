@@ -140,6 +140,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+        @ExceptionHandler(ReferentialIntegrityException.class)
+    public ResponseEntity<ApiError> handleReferentialIntegrity(
+            ReferentialIntegrityException ex,
+            HttpServletRequest request) {
+        ApiError error = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+
     // ─── 400 BAD REQUEST (Validación de campos) ───────────────────────────────
 
     /**

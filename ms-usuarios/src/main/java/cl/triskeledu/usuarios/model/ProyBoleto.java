@@ -13,8 +13,14 @@ import lombok.*;
 public class ProyBoleto {
 
     @Id
-    @Column(name = "id_boleto")
+    @Column(name = "id_boleto", nullable = false)
     private Integer idBoleto;
+
+    @Column(name = "id_evento")
+    private Integer idEvento;
+
+    @Column(name = "id_zona")
+    private Integer idZona;
 
     @Column(name = "codigo", length = 50)
     private String codigo;
