@@ -56,9 +56,9 @@ CREATE TABLE proy_boletos (
 
 -- Compras realizadas (Usuarios 7, 8 y 9 de los ejemplos anteriores)
 INSERT INTO compras (id_usuario, fecha, total, estado) VALUES
-(7, '2025-05-15', 90000.00, 'Completada'), -- ID 1: Carlos compró 2 canchas
-(8, '2025-05-16', 150000.00, 'Completada'), -- ID 2: Camila compró 1 VIP
-(9, '2025-05-18', 45000.00, 'Pendiente');   -- ID 3: Cristian tiene un pago en proceso
+(7, '2025-05-15', 90000.00, 'COMPLETADA'), -- ID 1: Carlos compró 2 canchas
+(8, '2025-05-16', 150000.00, 'COMPLETADA'), -- ID 2: Camila compró 1 VIP
+(9, '2025-05-18', 45000.00, 'PENDIENTE');   -- ID 3: Cristian tiene un pago en proceso
 
 -- Detalle de las compras
 INSERT INTO detalle_compras (id_compra, id_boleto, cantidad, subtotal) VALUES

@@ -59,16 +59,16 @@ INSERT INTO proy_usuarios (id_usuario, nombre, correo) VALUES
 (9, 'Cristian Castro', 'cristian@cliente.cl');
 
 INSERT INTO proy_compras (id_compra, total, estado) VALUES
-(1, 90000.00, 'Completada'),
-(2, 150000.00, 'Completada'),
-(3, 45000.00, 'Pendiente');
+(1, 90000.00, 'COMPLETADA'),
+(2, 150000.00, 'COMPLETADA'),
+(3, 45000.00, 'PENDIENTE');
 
 -- Registro de Pagos
 INSERT INTO pagos (monto, metodo, fecha_pago, estado) VALUES
-(90000.00, 'WebPay', '2025-05-15', 'Aprobado'),   -- ID 1
-(150000.00, 'PayPal', '2025-05-16', 'Aprobado'),  -- ID 2
-(45000.00, 'Transferencia', '2025-05-18', 'Pendiente'), -- ID 3
-(25000.00, 'WebPay', '2025-05-10', 'Reembolsado'); -- ID 4 (Anterior)
+(90000.00, 'WEBPAY', '2025-05-15', 'APROBADO'),
+(150000.00, 'PAYPAL', '2025-05-16', 'APROBADO'),
+(45000.00, 'TRANSFERENCIA', '2025-05-18', 'PENDIENTE'),
+(25000.00, 'WEBPAY', '2025-05-10', 'REEMBOLSADO');
 
 -- Registro de Transacciones Bancarias
 INSERT INTO transacciones (id_pago, codigo, banco, estado) VALUES

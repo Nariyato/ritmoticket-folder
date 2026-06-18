@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/pagos")
@@ -24,25 +23,21 @@ private final PagoService pagoService;
 
     @GetMapping
     public ResponseEntity<List<PagoResponse>> listarTodos() {
-        List<PagoResponse> responseList = pagoService.listarTodos().stream()
-                .map(pagoMapper::toResponse)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(pagoService.listarTodos());
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<PagoResponse> buscarPorId(@PathVariable Integer id) {
         return pagoService.buscarPorId(id)
-                .map(pago -> ResponseEntity.ok(pagoMapper.toResponse(pago)))
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<PagoResponse> crear(@RequestBody PagoRequest request) {
         Pago pago = pagoMapper.toEntity(request);
-        Pago pagoGuardado = pagoService.guardar(pago);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                             .body(pagoMapper.toResponse(pagoGuardado));
+        PagoResponse pagoGuardado = pagoService.guardar(pago);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pagoGuardado);
     }
 
     @DeleteMapping("/id/{id}")

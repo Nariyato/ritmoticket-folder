@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/compras")
@@ -31,12 +30,7 @@ public class CompraController {
 
     @GetMapping
     public ResponseEntity<List<CompraResponse>> listarCompras() {
-        List<Compra> compras = compraService.listarTodas();
-        List<CompraResponse> response = compras.stream()
-                .map(compraMapper::toResponse)
-                .collect(Collectors.toList());
-                
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(compraService.listarTodas());
     }
 
 }

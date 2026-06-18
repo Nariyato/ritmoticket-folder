@@ -425,5 +425,5 @@ ms-reportes/
 
 *Documento generado como parte de la implementación Kafka en RitmoTicket.*
 
-Falta agregar logs en los producer y el transactional en los consumer
+Falta agregar logs en los producer
 revisar bien el service de sync (sincronizacion) del ms-reportes

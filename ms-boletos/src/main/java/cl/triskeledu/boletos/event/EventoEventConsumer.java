@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class EventoEventConsumer {
 
     private final EventoProyeccionService eventoProyeccionService;
-
+    
     @KafkaListener(
         topics = "catalogo.evento.created",
         groupId = "ms-boletos",

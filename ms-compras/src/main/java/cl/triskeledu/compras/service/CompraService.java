@@ -2,7 +2,9 @@ package cl.triskeledu.compras.service;
 
 
 import cl.triskeledu.compras.client.BoletoClient;
+import cl.triskeledu.compras.dto.CompraResponse;
 import cl.triskeledu.compras.event.CompraEventProducer;
+import cl.triskeledu.compras.mapper.CompraMapper;
 import cl.triskeledu.compras.model.Compra;
 import cl.triskeledu.compras.model.DetalleCompra;
 import cl.triskeledu.compras.repository.CompraRepository;
@@ -22,6 +24,7 @@ public class CompraService {
 private final CompraRepository compraRepository;
     private final BoletoClient boletoClient;
     private final CompraEventProducer compraEventProducer;
+    private final CompraMapper compraMapper;
 
     @Transactional
     public Compra guardar(Compra compra) {
@@ -57,7 +60,10 @@ private final CompraRepository compraRepository;
         return guardada;
     }
 
-    public List<Compra> listarTodas() {
-        return compraRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<CompraResponse> listarTodas() {
+        return compraRepository.findAllWithDetalles().stream()
+                .map(compraMapper::toResponse)
+                .toList();
     }
 }

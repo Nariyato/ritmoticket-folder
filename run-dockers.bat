@@ -17,7 +17,7 @@ docker compose up -d
 
 echo 4. ESPERANDO A QUE LOS SERVICIOS ESTEN LISTOS...
 :: Kafka y Postgres necesitan unos segundos para inicializarse antes de recibir comandos
-timeout /t 5 /nobreak
+timeout /t 15 /nobreak
 
 echo 5. COMPILANDO BASES DE DATOS ADICIONALES...
 :: Entramos a tu carpeta de utilidades de DB
