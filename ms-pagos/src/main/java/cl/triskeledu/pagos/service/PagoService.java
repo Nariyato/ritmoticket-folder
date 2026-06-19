@@ -1,6 +1,9 @@
 package cl.triskeledu.pagos.service;
 
 import cl.triskeledu.common.event.PagoCreatedEvent;
+import cl.triskeledu.common.event.PagoUpdatedEvent;
+import cl.triskeledu.common.exception.EntityNotFoundException;
+import cl.triskeledu.pagos.client.CompraClient;
 import cl.triskeledu.pagos.dto.PagoResponse;
 import cl.triskeledu.pagos.event.PagoEventProducer;
 import cl.triskeledu.pagos.mapper.PagoMapper;
@@ -17,13 +20,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-    @SuppressWarnings("null")
-
+@SuppressWarnings("null")
 public class PagoService {
 
-private final PagoRepository pagoRepository;
+    private final PagoRepository pagoRepository;
     private final PagoEventProducer pagoEventProducer;
     private final PagoMapper pagoMapper;
+    private final CompraClient compraClient;
 
     @Transactional(readOnly = true)
     public List<PagoResponse> listarTodos() {
@@ -59,8 +62,29 @@ private final PagoRepository pagoRepository;
     }
 
     @Transactional
-    public void eliminar(Integer id) { 
-        pagoRepository.deleteById(id); 
+    public PagoResponse aprobar(Integer id) {
+        Pago pago = pagoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pagos", "ID", id.toString()));
+
+        pago.setEstado(EstadoPago.APROBADO);
+        Pago guardado = pagoRepository.save(pago);
+
+        pagoEventProducer.sendUpdated(PagoUpdatedEvent.builder()
+                .idPago(guardado.getIdPago())
+                .monto(guardado.getMonto())
+                .metodo(guardado.getMetodo() != null ? guardado.getMetodo().name() : null)
+                .estado(guardado.getEstado().name())
+                .build());
+
+        if (guardado.getIdCompra() != null) {
+            compraClient.confirmarCompra(guardado.getIdCompra());
+        }
+
+        return pagoMapper.toResponse(guardado);
     }
 
+    @Transactional
+    public void eliminar(Integer id) {
+        pagoRepository.deleteById(id);
+    }
 }

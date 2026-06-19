@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompraRequest {
-    private Integer idUsuario;
-    private List<DetalleCompraRequest> detalles;
-    private String metodoPago;
+public class CrearPagoRequest {
+    private Integer idCompra;
+    private BigDecimal monto;
+    private String metodo;
 }

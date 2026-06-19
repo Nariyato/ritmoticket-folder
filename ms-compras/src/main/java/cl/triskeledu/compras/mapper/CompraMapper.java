@@ -18,7 +18,6 @@ public interface CompraMapper {
     @Mapping(target = "fecha", ignore = true)
     @Mapping(target = "estado", ignore = true)
     @Mapping(target = "total", ignore = true)
-    @Mapping(target = "idUsuario", ignore = true)
     Compra toEntity(CompraRequest request);
 
     // 2. Mapeos individuales de los Detalles

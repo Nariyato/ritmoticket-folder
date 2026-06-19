@@ -24,8 +24,13 @@ public class CompraController {
     @PostMapping
     public ResponseEntity<CompraResponse> crearCompra(@RequestBody CompraRequest request) {
         Compra compraACrear = compraMapper.toEntity(request);
-        Compra compraGuardada = compraService.guardar(compraACrear);
+        Compra compraGuardada = compraService.guardar(compraACrear, request.getMetodoPago());
         return ResponseEntity.status(HttpStatus.CREATED).body(compraMapper.toResponse(compraGuardada));
+    }
+
+    @PutMapping("/confirmar/id/{id}")
+    public ResponseEntity<CompraResponse> confirmarCompra(@PathVariable Integer id) {
+        return ResponseEntity.ok(compraService.confirmar(id));
     }
 
     @GetMapping

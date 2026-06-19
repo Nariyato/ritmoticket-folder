@@ -5,9 +5,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @FeignClient(name = "ms-compras")
-
 public interface CompraClient {
-    @PutMapping("/api/v1/compras/confirmar/id/{id}")
-    void confirmarCompra(@PathVariable("id") Integer id);
 
+    @PutMapping("/api/v1/compras/confirmar/id/{id}")
+    void confirmarCompra(@PathVariable("id") Integer idCompra);
 }

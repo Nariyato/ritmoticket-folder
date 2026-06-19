@@ -7,7 +7,7 @@ import lombok.*;
 @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 
 public class PagoRequest {
+    private Integer idCompra;
     private BigDecimal monto;
     private String metodo;
-
 }

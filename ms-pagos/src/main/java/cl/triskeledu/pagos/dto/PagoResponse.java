@@ -8,8 +8,8 @@ import lombok.*;
 
 public class PagoResponse {
     private Integer idPago;
+    private Integer idCompra;
     private BigDecimal monto;
     private String metodo;
     private String estado;
-
 }

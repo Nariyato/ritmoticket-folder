@@ -40,6 +40,11 @@ private final PagoService pagoService;
         return ResponseEntity.status(HttpStatus.CREATED).body(pagoGuardado);
     }
 
+    @PutMapping("/aprobar/id/{id}")
+    public ResponseEntity<PagoResponse> aprobar(@PathVariable Integer id) {
+        return ResponseEntity.ok(pagoService.aprobar(id));
+    }
+
     @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         pagoService.eliminar(id);

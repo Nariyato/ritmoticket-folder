@@ -21,6 +21,9 @@ public class Pago {
     @Column(name = "id_pago", nullable = false)
     private Integer idPago;
 
+    @Column(name = "id_compra")
+    private Integer idCompra;
+
     @Column(name = "monto", precision = 10, scale = 2)
     private BigDecimal monto;
 
