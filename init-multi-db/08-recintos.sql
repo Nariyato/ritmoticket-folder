@@ -6,8 +6,6 @@
 \c recintos
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar conflictos de FK)
-DROP TABLE IF EXISTS proy_eventos;
-DROP TABLE IF EXISTS proy_artistas;
 DROP TABLE IF EXISTS sectores;
 DROP TABLE IF EXISTS escenarios;
 DROP TABLE IF EXISTS recintos;
@@ -37,19 +35,6 @@ CREATE TABLE sectores (
     estado VARCHAR(20) -- Disponible, Bloqueado
 );
 
--- 3. CREACIÓN DE TABLAS DE PROYECCIÓN (Sincronización mínima local)
-CREATE TABLE proy_artistas (
-    id_artista INT,
-    nombre_artistico VARCHAR(100),
-    genero VARCHAR(50)
-);
-
-CREATE TABLE proy_eventos (
-    id_evento INT,
-    nombre_evento VARCHAR(100),
-    categoria VARCHAR(50)
-);
-
 -- 4. INSERCIÓN DE DATOS (Poblamiento)
 
 -- Definición de Recintos (Venues)
@@ -74,14 +59,3 @@ INSERT INTO sectores (id_escenario, nombre, capacidad, estado) VALUES
 (2, 'Platea Alta', 5000, 'Disponible'),
 (2, 'Cancha VIP', 2000, 'Disponible'),
 (3, 'Butacas Primer Piso', 600, 'Disponible');
-
--- Poblamiento de Proyecciones (Sincronizado con microservicios de Artistas y Catálogo)
-INSERT INTO proy_artistas (id_artista, nombre_artistico, genero) VALUES
-(1, 'Los Bunkers', 'Rock Latino'),
-(2, 'Dua Lipa', 'Pop Internacional'),
-(4, 'Mon Laferte', 'Indie');
-
-INSERT INTO proy_eventos (id_evento, nombre_evento, categoria) VALUES
-(1, 'Gira Ven Aquí - Los Bunkers', 'Masivos'),
-(2, 'Radical Optimism Tour - Dua Lipa', 'Masivos'),
-(4, 'Autopoiética Tour - Mon Laferte', 'Íntimos');

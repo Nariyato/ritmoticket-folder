@@ -6,7 +6,6 @@
 \c pagos
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar conflictos de FK)
-DROP TABLE IF EXISTS proy_usuarios;
 DROP TABLE IF EXISTS proy_compras;
 DROP TABLE IF EXISTS reembolsos;
 DROP TABLE IF EXISTS transacciones;
@@ -45,20 +44,9 @@ CREATE TABLE proy_compras (
     estado VARCHAR(20)
 );
 
-CREATE TABLE proy_usuarios (
-    id_usuario INT,
-    nombre VARCHAR(100),
-    correo VARCHAR(100)
-);
-
 -- 4. INSERCIÓN DE DATOS (Poblamiento)
 
--- Poblamiento de Proyecciones (Sincronizado con Usuarios y Compras previos) 
-INSERT INTO proy_usuarios (id_usuario, nombre, correo) VALUES
-(7, 'Carlos Contreras', 'carlos@cliente.cl'),
-(8, 'Camila Cervantes', 'camila@cliente.cl'),
-(9, 'Cristian Castro', 'cristian@cliente.cl');
-
+-- Poblamiento de Proyecciones (Sincronizado con Compras previas) 
 INSERT INTO proy_compras (id_compra, total, estado) VALUES
 (1, 90000.00, 'COMPLETADA'),
 (2, 150000.00, 'COMPLETADA'),

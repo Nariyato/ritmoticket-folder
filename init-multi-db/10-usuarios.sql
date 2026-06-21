@@ -7,43 +7,38 @@
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar conflictos de FK)
 DROP TABLE IF EXISTS proy_boletos;
-DROP TABLE IF EXISTS proy_compras;
-DROP TABLE IF EXISTS direcciones;
+DROP TABLE IF EXISTS credenciales_usuarios;
 DROP TABLE IF EXISTS perfiles;
 DROP TABLE IF EXISTS usuarios;
 
 -- 2. CREACIÓN DE TABLAS MAESTRAS
 CREATE TABLE usuarios (
-    id_usuario SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    correo VARCHAR(100) UNIQUE NOT NULL,
-    telefono VARCHAR(20),
-    fecha_registro DATE
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    apellido VARCHAR(150) NOT NULL,
+    correo VARCHAR(150) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    rol VARCHAR(50) NOT NULL CHECK (rol IN ('Cliente', 'Administrador', 'Organizador')),
+    activo BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE perfiles (
-    id_perfil SERIAL PRIMARY KEY,
-    id_usuario INT REFERENCES usuarios(id_usuario),
-    nickname VARCHAR(50),
-    tipo_usuario VARCHAR(30), -- Cliente, Administrador, Promotor
-    estado VARCHAR(20) -- Activo, Suspendido, Inactivo
+    id SERIAL PRIMARY KEY,
+    usuario_correo VARCHAR(150) UNIQUE NOT NULL REFERENCES usuarios(correo) ON DELETE CASCADE,
+    telefono VARCHAR(30),
+    direccion VARCHAR(180), 
+    fecha_registro DATE NOT NULL DEFAULT CURRENT_DATE
 );
 
-CREATE TABLE direcciones (
-    id_direccion SERIAL PRIMARY KEY,
-    id_usuario INT REFERENCES usuarios(id_usuario),
-    ciudad VARCHAR(50),
-    calle VARCHAR(100),
-    numero INT
+CREATE TABLE credenciales_usuarios (
+    id SERIAL PRIMARY KEY,
+    usuario_correo VARCHAR(150) UNIQUE NOT NULL REFERENCES usuarios(correo) ON DELETE CASCADE,
+    ultimo_acceso TIMESTAMP,
+    bloqueado BOOLEAN NOT NULL DEFAULT FALSE,
+    intentos_fallidos INT NOT NULL DEFAULT 0 CHECK (intentos_fallidos >= 0)
 );
 
 -- 3. CREACIÓN DE TABLAS DE PROYECCIÓN (Sincronización mínima local)
-CREATE TABLE proy_compras (
-    id_compra INT,
-    total NUMERIC(10,2),
-    estado VARCHAR(20)
-);
-
 CREATE TABLE proy_boletos (
     id_boleto INT,
     id_evento INT, 
@@ -53,38 +48,45 @@ CREATE TABLE proy_boletos (
 );
 
 -- 4. ÍNDICES ADICIONALES
-CREATE INDEX idx_usuario_correo ON usuarios(correo);
+CREATE INDEX idx_usuarios_rol ON usuarios(rol);
+CREATE INDEX idx_usuarios_activo ON usuarios(activo);
+CREATE INDEX idx_perfil_correo ON perfiles(usuario_correo);
 
 -- 5. INSERCIÓN DE DATOS (Poblamiento)
 
 -- Usuarios Base (Siguiendo la lógica de los ejemplos previos)
 -- Se usan los IDs 7, 8 y 9 para mantener consistencia con los otros microservicios
-INSERT INTO usuarios (id_usuario, nombre, correo, telefono, fecha_registro) VALUES
-(7, 'Carlos Contreras', 'carlos@cliente.cl', '+56911112222', '2025-01-15'),
-(8, 'Camila Cervantes', 'camila@cliente.cl', '+56933334444', '2025-02-10'),
-(9, 'Cristian Castro', 'cristian@cliente.cl', '+56955556666', '2025-03-05');
+-- La contraseña por defecto fue configurada como 'Ritmo@2026' para todos los usuarios, y está almacenada como 
+-- hash (huella digital) utilizando el algoritmo BCrypt (generado con BCryptPasswordEncoder de Spring Security).
+INSERT INTO usuarios (nombre, apellido, correo, password, rol) VALUES
+('Ana',      'Aguilar',   'ana@administrador.cl',     '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Administrador'),
+('Andrés',   'Acosta',    'andres@administrador.cl',  '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Administrador'),
+('Adrián',   'Álvarez',   'adrian@administrador.cl',  '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Administrador'),
+('Beatriz',  'Bermúdez',  'beatriz@organizador.cl',      '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Organizador'),
+('Benito',   'Barrios',   'benito@organizador.cl',       '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Organizador'),
+('Belén',    'Bravo',     'belen@organizador.cl',        '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Organizador'),
+('Carlos',   'Contreras', 'carlos@cliente.cl',        '$$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW', 'Cliente'),
+('Camila',   'Cervantes', 'camila@cliente.cl',        '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Cliente'),
+('Cristian', 'Castro', 'cristian@cliente.cl',         '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Cliente');
+        -- "$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW" es un hash de ejemplo para la contraseña 'Ritmo@2026' utilizando "https://bcrypt-generator.com" (Rounds/cost: 10).
 
--- Forzar el reinicio de la secuencia del serial después de insertar IDs manuales
-SELECT setval('usuarios_id_usuario_seq', (SELECT MAX(id_usuario) FROM usuarios));
 
 -- Perfiles de Usuario
-INSERT INTO perfiles (id_usuario, nickname, tipo_usuario, estado) VALUES
-(7, 'CarlosC', 'Cliente VIP', 'Activo'),
-(8, 'CamiMusic', 'Cliente', 'Activo'),
-(9, 'CrisTickets', 'Cliente', 'Activo');
+INSERT INTO perfiles (usuario_correo, telefono, direccion) VALUES
+('ana@administrador.cl', '+56911111111', 'Calle Principal 123'),
+('beatriz@organizador.cl', '+56922222222', 'Santiago Centro 456'),
+('carlos@cliente.cl', '+56933333333', 'Paine 791'),
+('camila@cliente.cl', NULL, 'Av. Secundaria 456'),
+('cristian@cliente.cl', '+56944444444', 'Calle Tercera 789');
 
--- Direcciones de Despacho (Para envío de boletos físicos si aplica)
-INSERT INTO direcciones (id_usuario, ciudad, calle, numero) VALUES
-(7, 'Santiago', 'Av. Libertador', 1000),
-(8, 'Concepción', 'Calle O''Higgins', 450),
-(9, 'Valparaíso', 'Av. Pedro Montt', 12);
+INSERT INTO credenciales_usuarios (usuario_correo, ultimo_acceso, bloqueado, intentos_fallidos) VALUES
+('ana@administrador.cl',     NOW(), FALSE, 0),
+('beatriz@organizador.cl',   NOW(), FALSE, 0),
+('carlos@cliente.cl',        NOW(), FALSE, 1),
+('camila@cliente.cl',        NULL,  FALSE, 0),
+('cristian@cliente.cl',      NULL,  TRUE,  3);
 
--- Poblamiento de Proyecciones (Sincronizado con Compras y Boletos anteriores)
-INSERT INTO proy_compras (id_compra, total, estado) VALUES
-(1, 90000.00, 'Completada'),
-(2, 150000.00, 'Completada'),
-(3, 45000.00, 'Pendiente');
-
+-- Poblamiento de Proyecciones (Sincronizado con Boletos anteriores)
 INSERT INTO proy_boletos (id_boleto, id_evento, id_zona, codigo, estado) VALUES
 (1, 1, 1, 'TKT-LB-001', 'Vendido'),
 (3, 1, 3, 'TKT-DL-501', 'Reservado'),

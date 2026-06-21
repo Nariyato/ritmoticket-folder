@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS reservas;
 DROP TABLE IF EXISTS boletos;
 DROP TABLE IF EXISTS zonas;
 DROP TABLE IF EXISTS proy_eventos;
-DROP TABLE IF EXISTS proy_usuarios;
 
 -- 2. CREACIÓN DE TABLAS DE PROYECCIÓN (Datos externos necesarios localmente)
 CREATE TABLE proy_eventos (
@@ -18,13 +17,6 @@ CREATE TABLE proy_eventos (
     nombre_evento VARCHAR(100),
     fecha DATE
 );
-
-CREATE TABLE proy_usuarios (
-    id_usuario INT PRIMARY KEY,
-    nombre VARCHAR(100),
-    correo VARCHAR(100)
-);
-
 
 -- 3. CREACIÓN DE TABLAS MAESTRAS DEL MICROSERVICIO
 CREATE TABLE zonas (
@@ -55,12 +47,7 @@ CREATE TABLE reservas (
 
 -- 4. INSERCIÓN DE DATOS (Poblamiento)
 
--- Poblamiento de Proyecciones (Basado en usuarios y eventos conocidos)
-INSERT INTO proy_usuarios (id_usuario, nombre, correo) VALUES
-(7, 'Carlos Contreras', 'carlos@cliente.cl'),
-(8, 'Camila Cervantes', 'camila@cliente.cl'),
-(9, 'Cristian Castro', 'cristian@cliente.cl');
-
+-- Poblamiento de Proyecciones (Basado en eventos conocidos)
 INSERT INTO proy_eventos (id_evento, nombre_evento, fecha) VALUES
 (1, 'Gira Ven Aquí - Los Bunkers', '2025-12-15'),
 (2, 'Radical Optimism Tour - Dua Lipa', '2026-03-10');

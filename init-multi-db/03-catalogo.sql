@@ -5,8 +5,6 @@
 \c catalogo;
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso) 
-DROP TABLE IF EXISTS proy_recintos;
-DROP TABLE IF EXISTS proy_artistas;
 DROP TABLE IF EXISTS eventos; --cambiado de catalogo_eventos a eventos
 DROP TABLE IF EXISTS generos;
 DROP TABLE IF EXISTS categorias;
@@ -38,19 +36,6 @@ CREATE TABLE eventos (              --cambiado de catalogo_eventos a eventos
     id_recinto INT
 );
 
--- 3. CREACIÓN DE TABLAS DE PROYECCIÓN 
-CREATE TABLE proy_artistas (
-    id_artista INT,
-    nombre_artistico VARCHAR(100),
-    genero VARCHAR(50)
-);
-
-CREATE TABLE proy_recintos (
-    id_recinto INT,
-    nombre VARCHAR(100),
-    ciudad VARCHAR(50)
-);
-
 -- 4. INSERCIÓN DE DATOS (Poblamiento)
 
 -- Categorías de Eventos
@@ -73,15 +58,3 @@ INSERT INTO eventos (nombre_evento, categoria, fecha, estado, id_artista, id_rec
 ('Radical Optimism Tour - Dua Lipa', 'Masivos', '2026-03-10', 'Agotado', 2, 102),
 ('Lollapalooza Chile 2026', 'Festivales', '2026-03-21', 'Preventa', 5, 103),
 ('Autopoiética Tour - Mon Laferte', 'Íntimos', '2025-11-20', 'Disponible', 4, 103);
-
--- Poblamiento de Proyecciones (Referencias cruzadas con otros microservicios)
-INSERT INTO proy_artistas (id_artista, nombre_artistico, genero) VALUES
-(1, 'Los Bunkers', 'Rock Latino'),
-(2, 'Dua Lipa', 'Pop Internacional'),
-(4, 'Mon Laferte', 'Indie'),
-(5, 'Metallica', 'Heavy Metal');
-
-INSERT INTO proy_recintos (id_recinto, nombre, ciudad) VALUES
-(101, 'Estadio Nacional', 'Santiago'),
-(102, 'Movistar Arena', 'Santiago'),
-(103, 'Teatro Biobío', 'Concepcion');
