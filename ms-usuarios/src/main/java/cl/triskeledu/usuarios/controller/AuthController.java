@@ -33,7 +33,7 @@ public class AuthController {
     /**
      * Endpoint de inicio de sesión.
      *
-     * Recibe email y contraseña, valida las credenciales y retorna
+     * Recibe correo y contraseña, valida las credenciales y retorna
      * un token JWT que el cliente debe incluir en futuras peticiones
      * como header: Authorization: Bearer <token>
      */
