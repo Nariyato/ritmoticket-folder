@@ -1,0 +1,30 @@
+{
+  // ============================================================
+  // Tareas de VS Code para el proyecto Biblioteca
+  // ============================================================
+  // Tarea única: esperar a que Eureka Server esté listo.
+  // Los microservicios y el gateway la usan como preLaunchTask
+  // para poder arrancar todos en paralelo con "Debug All Services".
+  // ============================================================
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Wait for Eureka",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-Command",
+        "$timeout = 120; $elapsed = 0; Write-Host 'Esperando a Eureka Server en http://localhost:8761 ...'; while ($elapsed -lt $timeout) { try { $r = Invoke-WebRequest -Uri http://localhost:8761/actuator/health -UseBasicParsing -ErrorAction Stop; if ($r.StatusCode -eq 200) { Write-Host 'Eureka Server esta listo!'; exit 0 } } catch { } Start-Sleep -Seconds 3; $elapsed += 3; Write-Host \"  ... $elapsed s\" }; Write-Host 'TIMEOUT: Eureka no respondio en $timeout s'; exit 1"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Esperando",
+          "endsPattern": "listo|TIMEOUT"
+        }
+      }
+    }
+  ]
+}
