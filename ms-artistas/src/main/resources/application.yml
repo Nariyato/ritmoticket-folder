@@ -31,6 +31,16 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
+# Esta clave secreta DEBE ser idéntica en todos los microservicios
+# para que los tokens generados por ms-usuarios sean válidos en
+# los demas ms.
+# Para dar el valor al "secret" trasformaremos la frase clave (inventada) 
+# "tokenSecretKeyRitmo2026TriskeleduSecurity" a formato Base64
+jwt:
+  secret: "dG9rZW5TZWNyZXRLZXlSaXRtbzIwMjZUcmlza2VsZWR1U2VjdXJpdHk="
+  expiration-ms: 3600000
+  # Para que el token sea válido por 1 hora (3600000 ms)
+
 server:
   port: 9001
   error:

@@ -11,8 +11,6 @@ import cl.triskeledu.usuarios.dto.UsuarioRequest;
 import cl.triskeledu.usuarios.dto.UsuarioResponse;
 import cl.triskeledu.usuarios.dto.PerfilRequest;
 import cl.triskeledu.usuarios.dto.PerfilResponse;
-import cl.triskeledu.usuarios.dto.DireccionRequest;
-import cl.triskeledu.usuarios.dto.DireccionResponse;
 import cl.triskeledu.usuarios.service.UsuarioService;
 
 import jakarta.validation.Valid;
@@ -69,13 +67,5 @@ public class UsuarioController {
             @Valid @RequestBody PerfilRequest request) {
         PerfilResponse creado = usuarioService.addPerfilAUsuario(idUsuario, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
-    }
-
-    @PostMapping("/direcciones/idUsuario/{idUsuario}")
-    public ResponseEntity<DireccionResponse> addDireccionAUsuario(
-            @PathVariable @NonNull Integer idUsuario,
-            @Valid @RequestBody DireccionRequest request) {
-        DireccionResponse creada = usuarioService.addDireccionAUsuario(idUsuario, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
     }
 }

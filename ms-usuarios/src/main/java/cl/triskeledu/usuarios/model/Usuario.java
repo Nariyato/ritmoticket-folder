@@ -2,10 +2,6 @@ package cl.triskeledu.usuarios.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
@@ -14,30 +10,35 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EntityListeners(AuditingEntityListener.class)
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario")
-    private Integer idUsuario;
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(name = "nombre", nullable = false, length = 100)
+    @Column(name = "nombre", nullable = false, length = 150)
     private String nombre;
 
-    @Column(name = "correo", nullable = false, unique = true, length = 100)
+    @Column(name = "apellido", nullable = false, length = 150)
+    private String apellido;
+
+    @Column(name = "correo", nullable = false, unique = true, length = 150)
     private String correo;
 
-    @Column(name = "telefono", length = 20)
-    private String telefono;
+    @Column(name = "password", nullable = false, length = 255)
+    private String password;
 
-    @CreatedDate
-    @Column(name = "fecha_registro")
-    private LocalDate fechaRegistro;
+    @Column(name = "rol", nullable = false, length = 50)
+    private String rol;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Perfil> perfiles;
+    @Column(name = "activo")
+    @Builder.Default
+    private Boolean activo = true;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Direccion> direcciones;
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Perfil perfil;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CredencialesUsuario credenciales;
 }

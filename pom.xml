@@ -14,7 +14,7 @@
     <!--
     Modulos hijos del proyecto.
     Cada uno es un subproyecto independiente (microservicio o libreria comun).
-    -->
+    --> 
     <modules>
         <module>common</module>             <!-- Libreria comun compartida por todos los microservicios -->
         <module>eureka</module>             <!-- Servidor Eureka -->
@@ -70,6 +70,7 @@
         <cl-triskeledu-common.version>0.0.1-SNAPSHOT</cl-triskeledu-common.version>
         <spring-kafka.version>3.3.5</spring-kafka.version>
         <spring-boot-actuator.version>3.5.14</spring-boot-actuator.version>
+        <jjwt.version>0.12.6</jjwt.version>
     </properties>
 
     <dependencyManagement>
@@ -158,6 +159,34 @@
                 <version>${spring-boot.version}</version>
             </dependency>
 
+           <!-- Spring Security: autenticación y autorización -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <!-- JJWT API: interfaz principal para trabajar con JSON Web Tokens -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <!-- JJWT Impl: implementación de la API de JJWT -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <!-- JJWT Jackson: soporte para serialización y deserialización de JWT usando Jackson -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -241,3 +270,9 @@
     </build>
 
 </project>
+
+
+
+
+
+

@@ -1,6 +1,5 @@
 package cl.triskeledu.usuarios.dto;
 
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class UsuarioResponse {
     private Integer idUsuario;
     private String nombre;
+    private String apellido;
     private String correo;
-    private String telefono;
-    private LocalDate fechaRegistro;
+    private String rol;
+    private Boolean activo;
 }

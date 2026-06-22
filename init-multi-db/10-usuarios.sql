@@ -65,7 +65,7 @@ INSERT INTO usuarios (nombre, apellido, correo, password, rol) VALUES
 ('Beatriz',  'Bermúdez',  'beatriz@organizador.cl',      '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Organizador'),
 ('Benito',   'Barrios',   'benito@organizador.cl',       '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Organizador'),
 ('Belén',    'Bravo',     'belen@organizador.cl',        '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Organizador'),
-('Carlos',   'Contreras', 'carlos@cliente.cl',        '$$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW', 'Cliente'),
+('Carlos',   'Contreras', 'carlos@cliente.cl',        '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW', 'Cliente'),
 ('Camila',   'Cervantes', 'camila@cliente.cl',        '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Cliente'),
 ('Cristian', 'Castro', 'cristian@cliente.cl',         '$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW',  'Cliente');
         -- "$2a$10$n5Ve7TJaQcPLrABIOQPMyefjFGeCBh3AX3yal1fTdE0QknQQmcUyW" es un hash de ejemplo para la contraseña 'Ritmo@2026' utilizando "https://bcrypt-generator.com" (Rounds/cost: 10).
