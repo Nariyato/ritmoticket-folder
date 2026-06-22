@@ -117,6 +117,7 @@
       "name": "Debug All Services",
       "configurations": [
         "Debug Eureka",
+        "Debug API Gateway",
         "Debug ms-artistas",
         "Debug ms-boletos",
         "Debug ms-catalogo",
