@@ -28,6 +28,7 @@
         <module>ms-recintos</module>        <!-- Microservicio recintos -->
         <module>ms-reportes</module>        <!-- Microservicio reportes -->
         <module>ms-usuarios</module>        <!-- Microservicio usuarios -->
+        <module>api-gateway</module>        <!-- API Gateway (puerto 9000) -->
         <!-- CGV: Agrega aqui mas modulos segun sea necesario -->
     </modules>
 
@@ -53,7 +54,7 @@
         <java.version>21</java.version>                                            <!-- Version de Java a utilizar -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>3.5.14</spring-boot.version>                        <!-- Version de Spring Boot base para microservicios -->
+        <spring-boot.version>3.5.15</spring-boot.version>                        <!-- Version de Spring Boot base para microservicios -->
         <spring-cloud.version>2025.0.0</spring-cloud.version>                                 <!-- Version de Spring Cloud -->
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.44</lombok.version>
