@@ -8,13 +8,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!--
-    Hereda del POM padre del proyecto Biblioteca.
+    Hereda del POM padre del proyecto Ritmoticket.
     Esto permite reutilizar las versiones de Spring Boot, Spring Cloud y demás
     dependencias definidas centralizadamente en el proyecto padre.
     -->
     <parent>
         <groupId>cl.triskeledu</groupId>
-        <artifactId>biblioteca</artifactId>
+        <artifactId>ritmoticket</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -26,7 +26,7 @@
 
     <name>API Gateway</name>
     <description>
-        API Gateway del proyecto Biblioteca.
+        API Gateway del proyecto Ritmoticket.
         Punto de entrada único para todos los microservicios.
         Utiliza Spring Cloud Gateway (reactivo) con integración a Eureka
         para descubrimiento de servicios y balanceo de carga automático.
@@ -98,7 +98,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>cl.triskeledu.gateway.BibliotecaGatewayApplication</mainClass>
+                    <mainClass>cl.triskeledu.gateway.RitmoticketGatewayApplication</mainClass>
                 </configuration>
             </plugin>
 
