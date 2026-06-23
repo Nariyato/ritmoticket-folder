@@ -42,7 +42,7 @@ jwt:
   # Para que el token sea válido por 1 hora (3600000 ms)
 
 server:
-  port: 9001
+  port: 0
   error:
     include-stacktrace: never
 

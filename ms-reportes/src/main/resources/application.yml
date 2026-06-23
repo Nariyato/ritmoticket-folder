@@ -36,7 +36,7 @@ jwt:
   expiration-ms: 3600000
 
 server:
-  port: 9009
+  port: 0
   error:
     include-stacktrace: never
 

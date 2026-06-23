@@ -26,7 +26,7 @@ jwt:
   expiration-ms: 3600000
 
 server:
-  port: 9010
+  port: 0
   error:
     include-stacktrace: never   # Nunca exponer el stacktrace en la respuesta HTTP (riesgo de seguridad)
 
