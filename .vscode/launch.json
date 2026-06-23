@@ -16,7 +16,7 @@
       "name": "Debug API Gateway",
       "request": "launch",
       "cwd": "${workspaceFolder}/api-gateway",
-      "mainClass": "cl.triskeledu.gateway.BibliotecaGatewayApplication",
+      "mainClass": "cl.triskeledu.gateway.RitmoticketGatewayApplication",
       "projectName": "cl-triskeledu-gateway",
       "vmArgs": "-Dcom.sun.management.jmxremote.port=10900 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false",
       "preLaunchTask": "Wait for Eureka"

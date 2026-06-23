@@ -30,10 +30,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @SpringBootApplication
 @EnableDiscoveryClient  // Habilita el registro y descubrimiento de servicios en Eureka Server
-public class BibliotecaGatewayApplication {
+public class RitmoticketGatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BibliotecaGatewayApplication.class, args);
+        SpringApplication.run(RitmoticketGatewayApplication.class, args);
     }
 
 }
