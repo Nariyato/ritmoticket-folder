@@ -38,7 +38,7 @@ public class JwtTokenProvider {
      * Genera un token JWT firmado.
      *
      * @param correo         correo del usuario (será el "subject" del token)
-     * @param rol            rol del usuario (Administrador, Bibliotecario, Cliente)
+     * @param rol            rol del usuario (Administrador, Organizador, Cliente)
      * @param nombreCompleto nombre completo para incluir como claim adicional
      * @return token JWT como String
      */
@@ -98,6 +98,15 @@ public class JwtTokenProvider {
      */
     public String getNombreFromToken(String token) {
         return getClaims(token).get("nombre", String.class);
+    }
+
+    /**
+     * Extrae la fecha de expiración del token.
+     * Utilizado por el servicio de logout para saber cuándo
+     * un token en la blacklist puede ser limpiado.
+     */
+    public Date getExpirationFromToken(String token) {
+        return getClaims(token).getExpiration();
     }
 
     // ─── Métodos privados ────────────────────────────────────────────────────

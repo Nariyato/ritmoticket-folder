@@ -35,18 +35,31 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
+
+                // PERMITIR RUTAS PÚBLICAS DE SWAGGER / SPRINGDOC
+                .requestMatchers(
+                    "/v3/api-docs/**",
+                    "/v3/api-docs.yaml",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/swagger-resources/**",
+                    "/webjars/**",
+                    "/favicon.ico"
+                ).permitAll()
+
+                // Actuator siempre público
                 .requestMatchers("/actuator/**").permitAll()
 
                 // Consulta de eventos y validaciones Feign (existe/id...)
-                .requestMatchers(HttpMethod.GET, "/api/v1/catalogo/**")
+                .requestMatchers(HttpMethod.GET, "/api/v1/eventos/**")
                     .hasAnyRole("Cliente", "Organizador", "Administrador")
 
                 // Alta, edición y baja de eventos
-                .requestMatchers(HttpMethod.POST, "/api/v1/catalogo/**")
+                .requestMatchers(HttpMethod.POST, "/api/v1/eventos/**")
                     .hasAnyRole("Organizador", "Administrador")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/catalogo/**")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/**")
                     .hasAnyRole("Organizador", "Administrador")
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/catalogo/**")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos/**")
                     .hasAnyRole("Organizador", "Administrador")
 
                 .anyRequest().authenticated()

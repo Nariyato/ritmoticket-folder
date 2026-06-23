@@ -32,6 +32,19 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
+                
+                // PERMITIR RUTAS PÚBLICAS DE SWAGGER / SPRINGDOC
+                .requestMatchers(
+                    "/v3/api-docs/**",
+                    "/v3/api-docs.yaml",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/swagger-resources/**",
+                    "/webjars/**",
+                    "/favicon.ico"
+                ).permitAll()
+
+                // Actuator siempre público
                 .requestMatchers("/actuator/**").permitAll()
 
                 .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/**")

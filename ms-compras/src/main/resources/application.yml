@@ -1,5 +1,5 @@
 # ============================================================
-# MS-CATALOGO - Configuración principal (Global)
+# MS-COMPRAS - Configuración principal 
 # ============================================================
 spring:
   application:
@@ -30,14 +30,7 @@ spring:
   jpa:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    # [SWAGGER-INI] 
-# Configuración de SpringDoc/Swagger UI
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-# [SWAGGER-FIN] 
+
 
 
 jwt:
@@ -48,6 +41,13 @@ server:
   port: 0
   error:
     include-stacktrace: never
+
+# Configuración de SpringDoc/Swagger UI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
 
 eureka:
   client:

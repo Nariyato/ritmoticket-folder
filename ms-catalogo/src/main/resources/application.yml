@@ -30,14 +30,7 @@ spring:
   jpa:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    # [SWAGGER-INI] 
-# Configuración de SpringDoc/Swagger UI
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-# [SWAGGER-FIN] 
+
 
 
 jwt:
@@ -45,9 +38,16 @@ jwt:
   expiration-ms: 3600000
 
 server:
-  port: 0
+  port: 9003
   error:
     include-stacktrace: never
+
+# Configuración de SpringDoc/Swagger UI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
 
 eureka:
   client:

@@ -1,5 +1,5 @@
 # ============================================================
-# MS-CATALOGO - Configuración principal (Global)
+# MS-USUARIOS - Configuración principal 
 # ============================================================
 spring:
   application:
@@ -20,23 +20,23 @@ jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     # ddl-auto va en cada perfil porque su valor cambia entre dev y prod
 
-  # [SWAGGER-INI] 
-  springdoc:
-    api-docs:
-      path: /v3/api-docs
-    swagger-ui:
-      path: /swagger-ui.html
-  # [SWAGGER-FIN] 
 
 jwt:
   secret: "dG9rZW5TZWNyZXRLZXlSaXRtbzIwMjZUcmlza2VsZWR1U2VjdXJpdHk="
   expiration-ms: 3600000
 
 server:
-  port: 0
+  port: 9010
   error:
     include-stacktrace: never   # Nunca exponer el stacktrace en la respuesta HTTP (riesgo de seguridad)
->>>>>>> 80d8a56be1d84fc48ee91168d2bb45c4ff045c36
+
+
+# Configuración de SpringDoc/Swagger UI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
 
 eureka:
   client:

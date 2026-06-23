@@ -21,13 +21,17 @@ cl\triskeledu\common\exception\ApiError$ApiErrorBuilder.class
 cl\triskeledu\common\event\BoletoCreatedEvent$BoletoCreatedEventBuilder.class
 cl\triskeledu\common\event\CompraUpdatedEvent.class
 cl\triskeledu\common\security\JwtProperties.class
+cl\triskeledu\common\security\TokenBlacklistService.class
 cl\triskeledu\common\exception\DuplicateResourceException.class
 cl\triskeledu\common\event\PagoCreatedEvent.class
 cl\triskeledu\common\event\CompraCreatedEvent$CompraCreatedEventBuilder.class
 cl\triskeledu\common\event\PagoUpdatedEvent$PagoUpdatedEventBuilder.class
 cl\triskeledu\common\event\BoletoUpdatedEvent$BoletoUpdatedEventBuilder.class
 cl\triskeledu\common\exception\ReferentialIntegrityException.class
+cl\triskeledu\common\server\InstanceHeaderFilter.class
 cl\triskeledu\common\exception\GlobalExceptionHandler.class
+cl\triskeledu\common\server\InstanceHeaderAutoConfiguration.class
 cl\triskeledu\common\security\FeignClientInterceptor.class
+cl\triskeledu\common\config\OpenApiConfig.class
 cl\triskeledu\common\event\EventoUpdatedEvent.class
 cl\triskeledu\common\event\PagoCreatedEvent$PagoCreatedEventBuilder.class

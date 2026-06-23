@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "ms-catalogo") 
 public interface CatalogoClient {
 
-    @GetMapping("/api/v1/catalogo/recintos/existe/idRecinto/{idRecinto}")
+    @GetMapping("/api/v1/eventos/existe/recinto/{idRecinto}")
     boolean existsByRecintoId(@PathVariable("idRecinto") Long idRecinto);
 
 }

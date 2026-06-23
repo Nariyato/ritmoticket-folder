@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final TokenBlacklistService tokenBlacklistService;
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
@@ -54,6 +55,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 2. Validar y autenticar solo si existe un token
             if (StringUtils.hasText(token) && jwtTokenProvider.validarToken(token)) {
 
+                // CORRECCIÓN: Si está en la lista negra, limpia contexto, responde 401 y corta la ejecución
+                if (tokenBlacklistService.isBlacklisted(token)) {
+                    log.debug("Token rechazado: se encuentra en la blacklist (logout)");
+                    SecurityContextHolder.clearContext();
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return; 
+                }
+
                 // 3. Extraer claims del token
                 String correo = jwtTokenProvider.getCorreoFromToken(token);
                 String rol = jwtTokenProvider.getRolFromToken(token);
@@ -65,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // 5. Guardar el token en credentials para que FeignClientInterceptor lo propague
                 UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(correo, token, authorities);
+                    new UsernamePasswordAuthenticationToken(correo, null, authorities);
 
                 // 6. Inyectar en el SecurityContext para que Spring Security lo use
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -86,8 +95,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /**
      * Extrae el token JWT del header Authorization.
      * Espera el formato: "Bearer eyJhbGciOiJIUzI1NiJ9..."
-     *
-     * @return el token sin el prefijo "Bearer ", o null si no existe
      */
     private String extraerToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
@@ -96,4 +103,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/swagger-ui") ||
+               path.startsWith("/v3/api-docs") ||
+               path.startsWith("/swagger-resources") ||
+               path.startsWith("/webjars") ||
+               path.equals("/favicon.ico") ||
+               path.startsWith("/actuator");
+    }
+
 }

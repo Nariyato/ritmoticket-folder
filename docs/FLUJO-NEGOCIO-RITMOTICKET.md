@@ -101,7 +101,7 @@ Orden lógico de operaciones y servicios involucrados:
 
 | Acción | Servicio | Qué pasa |
 |--------|----------|----------|
-| `POST /api/v1/catalogo` | **ms-catalogo** | Guarda el concierto (nombre, fecha, artista, recinto) |
+| `POST /api/v1/eventos` | **ms-catalogo** | Guarda el concierto (nombre, fecha, artista, recinto) |
 | Publicación Kafka | **ms-catalogo** → **ms-boletos** | Topic `catalogo.evento.created` |
 | Consumer | **ms-boletos** | Crea fila en `proy_eventos` (proyección local) |
 

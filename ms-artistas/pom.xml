@@ -42,13 +42,13 @@
     <!-- Dependencias necesarias para este microservicio -->
     <dependencies>
     
-        <!-- [SWAGGER-INI] -->
+        
         <!-- Springdoc OpenAPI: generacion automatica de documentacion Swagger UI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
-        <!-- [SWAGGER-FIN] -->
+    
 
         <!-- Libreria comun compartida -->
         <dependency>
