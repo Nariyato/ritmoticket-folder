@@ -31,6 +31,10 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
+jwt:
+  secret: "dG9rZW5TZWNyZXRLZXlSaXRtbzIwMjZUcmlza2VsZWR1U2VjdXJpdHk="
+  expiration-ms: 3600000
+
 server:
   port: 9009
   error:

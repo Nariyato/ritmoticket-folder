@@ -1,13 +1,15 @@
 package cl.triskeledu.usuarios.repository;
 
+import cl.triskeledu.usuarios.model.Perfil;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import cl.triskeledu.usuarios.model.Perfil;
-import java.util.List;
+
+import java.util.Optional;
 
 @Repository
 public interface PerfilRepository extends JpaRepository<Perfil, Integer> {
-    
-    // Opcional: Buscar todos los perfiles asociados a un ID de usuario específico
-    List<Perfil> findByUsuario_IdUsuario(Integer idUsuario);
+
+    Optional<Perfil> findByUsuario_Id(Integer idUsuario);
+
+    Optional<Perfil> findByUsuario_Correo(String correo);
 }
