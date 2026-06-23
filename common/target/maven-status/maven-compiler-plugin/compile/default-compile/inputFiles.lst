@@ -1,6 +1,25 @@
+<<<<<<< HEAD
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\EventoDeletedEvent.java
 C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\exception\ApiError.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\BoletoCreatedEvent.java
 C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\exception\ReferentialIntegrityException.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\security\JwtTokenProvider.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\BoletoUpdatedEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\EventoUpdatedEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\security\JwtAuthenticationFilter.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\BoletoEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\EventoCreatedEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\PagoEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\security\FeignClientInterceptor.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\CompraUpdatedEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\security\JwtProperties.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\CompraCreatedEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\PagoCreatedEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\EventoEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\PagoUpdatedEvent.java
+C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\event\CompraEvent.java
 C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\exception\GlobalExceptionHandler.java
 C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\exception\EntityNotFoundException.java
 C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\CommonAutoConfiguration.java
 C:\ritmoticket-folder\common\src\main\java\cl\triskeledu\common\exception\DuplicateResourceException.java
+=======

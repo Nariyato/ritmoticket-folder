@@ -26,7 +26,7 @@ public class RecintoController {
         return ResponseEntity.ok(recintoService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<RecintoResponse> findById(@PathVariable @NonNull Long id) {
         return ResponseEntity.ok(recintoService.findById(id));
     }
@@ -42,14 +42,14 @@ public class RecintoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<RecintoResponse> update(
             @PathVariable @NonNull Long id,
             @Valid @RequestBody RecintoRequest request) {
         return ResponseEntity.ok(recintoService.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable @NonNull Long id) {
         recintoService.deleteById(id);
         return ResponseEntity.noContent().build();

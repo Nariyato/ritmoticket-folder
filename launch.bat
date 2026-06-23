@@ -192,9 +192,9 @@ rmdir /s /q C:\ritmoticket-folder\eureka\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-artistas\target
 
-rmdir /s /q C:\ritmoticket-folder\ms-boletos\target
 
-rmdir /s /q C:\ritmoticket-folder\ms-catalogo\target
+
+
 
 rmdir /s /q C:\ritmoticket-folder\ms-compras\target
 
@@ -202,7 +202,7 @@ rmdir /s /q C:\ritmoticket-folder\ms-notificaciones\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-pagos\target
 
-rmdir /s /q C:\ritmoticket-folder\ms-precios\target
+
 
 rmdir /s /q C:\ritmoticket-folder\ms-recintos\target
 

@@ -6,7 +6,6 @@
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso)
 DROP TABLE IF EXISTS proy_compras;
-DROP TABLE IF EXISTS proy_usuarios;
 DROP TABLE IF EXISTS sms;
 DROP TABLE IF EXISTS correos;
 DROP TABLE IF EXISTS notificaciones;
@@ -37,12 +36,6 @@ CREATE TABLE sms (
 );
 
 -- 3. CREACIÓN DE TABLAS DE PROYECCIÓN (Sincronización con otros microservicios)
-CREATE TABLE proy_usuarios (
-    id_usuario INT,
-    nombre VARCHAR(100),
-    correo VARCHAR(100)
-);
-
 CREATE TABLE proy_compras (
     id_compra INT,
     total NUMERIC(10,2),
@@ -51,12 +44,7 @@ CREATE TABLE proy_compras (
 
 -- 4. INSERCIÓN DE DATOS (Poblamiento)
 
--- Poblamiento de Proyecciones (Sincronizado con microservicios de Usuarios y Compras)
-INSERT INTO proy_usuarios (id_usuario, nombre, correo) VALUES
-(7, 'Carlos Contreras', 'carlos@cliente.cl'),
-(8, 'Camila Cervantes', 'camila@cliente.cl'),
-(9, 'Cristian Castro', 'cristian@cliente.cl');
-
+-- Poblamiento de Proyecciones (Sincronizado con microservicio de Compras)
 INSERT INTO proy_compras (id_compra, total, estado) VALUES
 (1, 90000.00, 'Completada'),
 (2, 150000.00, 'Completada'),

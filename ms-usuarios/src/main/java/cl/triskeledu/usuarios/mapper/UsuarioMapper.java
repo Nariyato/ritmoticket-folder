@@ -12,19 +12,19 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
 
-    @Mapping(target = "idUsuario", ignore = true)
-    @Mapping(target = "fechaRegistro", ignore = true) // JPA Auditing se encarga de esto
-    @Mapping(target = "perfiles", ignore = true)      // El Service manejará estas listas
-    @Mapping(target = "direcciones", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "perfil", ignore = true)
+    @Mapping(target = "credenciales", ignore = true)
+    @Mapping(target = "activo", defaultValue = "true")
     Usuario toEntity(UsuarioRequest request);
 
+    @Mapping(target = "idUsuario", source = "id")
     UsuarioResponse toResponse(Usuario usuario);
 
     List<UsuarioResponse> toResponseList(List<Usuario> usuarios);
 
-    @Mapping(target = "idUsuario", ignore = true)
-    @Mapping(target = "fechaRegistro", ignore = true)
-    @Mapping(target = "perfiles", ignore = true)
-    @Mapping(target = "direcciones", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "perfil", ignore = true)
+    @Mapping(target = "credenciales", ignore = true)
     void updateEntity(UsuarioRequest request, @MappingTarget Usuario usuario);
 }

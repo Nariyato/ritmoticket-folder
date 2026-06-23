@@ -24,4 +24,7 @@ public class ProyPago {
     @Column(name = "estado", length = 20)
     private String estado;
 
+    @Column(name = "metodo", length = 50)
+    private String metodo;
+
 }

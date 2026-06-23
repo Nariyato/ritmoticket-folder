@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "ms-catalogo") 
 public interface CatalogoClient {
 
-    // Asumimos que el ms-catalogo tendrá un endpoint para verificar dependencias del artista
-    @GetMapping("/api/v1/catalogo/artistas/{idArtista}/existe")
+    @GetMapping("/api/v1/catalogo/artistas/existe/idArtista/{idArtista}")
     boolean existsByArtistaId(@PathVariable("idArtista") Integer idArtista);
 
 }
-    

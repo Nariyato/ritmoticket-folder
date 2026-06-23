@@ -26,7 +26,7 @@ public class ArtistaController {
         return ResponseEntity.ok(artistaService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<ArtistaResponse> findById(@PathVariable @NonNull Integer id) {
         return ResponseEntity.ok(artistaService.findById(id));
     }
@@ -42,20 +42,20 @@ public class ArtistaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<ArtistaResponse> update(
             @PathVariable @NonNull Integer id,
             @Valid @RequestBody ArtistaRequest request) {
         return ResponseEntity.ok(artistaService.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable @NonNull Integer id) {
         artistaService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{artistaId}/album/{albumId}")
+    @PostMapping("/artistaId/{artistaId}/albumId/{albumId}")
     public ResponseEntity<Void> addAlbumAArtista(
             @PathVariable @NonNull Integer artistaId, 
             @PathVariable @NonNull Integer albumId) {

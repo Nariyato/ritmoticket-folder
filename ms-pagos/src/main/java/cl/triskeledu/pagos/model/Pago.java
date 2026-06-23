@@ -13,7 +13,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 
 public class Pago {
 
@@ -21,6 +20,9 @@ public class Pago {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_pago", nullable = false)
     private Integer idPago;
+
+    @Column(name = "id_compra")
+    private Integer idCompra;
 
     @Column(name = "monto", precision = 10, scale = 2)
     private BigDecimal monto;
@@ -37,11 +39,9 @@ public class Pago {
     private EstadoPago estado;
 
     @OneToMany(mappedBy = "pago", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Transaccion> transacciones = new ArrayList<>();
+    private List<Transaccion> transacciones = new ArrayList<>(); // Sin builder.default
 
     @OneToMany(mappedBy = "pago", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private List<Reembolso> reembolsos = new ArrayList<>();
 
     @Override

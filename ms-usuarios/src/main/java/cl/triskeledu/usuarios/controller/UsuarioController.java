@@ -11,8 +11,6 @@ import cl.triskeledu.usuarios.dto.UsuarioRequest;
 import cl.triskeledu.usuarios.dto.UsuarioResponse;
 import cl.triskeledu.usuarios.dto.PerfilRequest;
 import cl.triskeledu.usuarios.dto.PerfilResponse;
-import cl.triskeledu.usuarios.dto.DireccionRequest;
-import cl.triskeledu.usuarios.dto.DireccionResponse;
 import cl.triskeledu.usuarios.service.UsuarioService;
 
 import jakarta.validation.Valid;
@@ -30,7 +28,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<UsuarioResponse> findById(@PathVariable @NonNull Integer id) {
         return ResponseEntity.ok(usuarioService.findById(id));
     }
@@ -46,14 +44,14 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<UsuarioResponse> update(
             @PathVariable @NonNull Integer id,
             @Valid @RequestBody UsuarioRequest request) {
         return ResponseEntity.ok(usuarioService.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable @NonNull Integer id) {
         usuarioService.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -63,19 +61,11 @@ public class UsuarioController {
     // ENDPOINTS PARA SUB-RECURSOS (Perfiles y Direcciones)
     // ==========================================
 
-    @PostMapping("/{idUsuario}/perfiles")
+    @PostMapping("/perfiles/idUsuario/{idUsuario}")
     public ResponseEntity<PerfilResponse> addPerfilAUsuario(
             @PathVariable @NonNull Integer idUsuario,
             @Valid @RequestBody PerfilRequest request) {
         PerfilResponse creado = usuarioService.addPerfilAUsuario(idUsuario, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
-    }
-
-    @PostMapping("/{idUsuario}/direcciones")
-    public ResponseEntity<DireccionResponse> addDireccionAUsuario(
-            @PathVariable @NonNull Integer idUsuario,
-            @Valid @RequestBody DireccionRequest request) {
-        DireccionResponse creada = usuarioService.addDireccionAUsuario(idUsuario, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
     }
 }

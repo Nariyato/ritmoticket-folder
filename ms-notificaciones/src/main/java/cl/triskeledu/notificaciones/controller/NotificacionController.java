@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notificaciones") // Endpoint asociado a notificaciones [cite: 11]
+@RequestMapping("/api/v1/notificaciones") // Endpoint asociado a notificaciones [cite: 11]
 @RequiredArgsConstructor
 
 public class NotificacionController {
@@ -22,7 +22,7 @@ public class NotificacionController {
         return ResponseEntity.ok(notificacionService.listarTodas());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<Notificacion> buscarPorId(@PathVariable Integer id) {
         return notificacionService.buscarPorId(id)
                 .map(ResponseEntity::ok)
@@ -34,7 +34,7 @@ public class NotificacionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(notificacionService.guardar(notificacion));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         notificacionService.eliminar(id);
         return ResponseEntity.noContent().build();

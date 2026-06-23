@@ -6,9 +6,7 @@
 \c artistas;
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar errores de FK)
-DROP TABLE IF EXISTS proy_precios;
-DROP TABLE IF EXISTS proy_recintos;
-DROP TABLE IF EXISTS eventos_artista;
+DROP TABLE IF EXISTS eventos_artista; --lista informativa para el perfil del artista, no es el creador oficial del evento
 DROP TABLE IF EXISTS albums;
 DROP TABLE IF EXISTS artistas;
 
@@ -37,19 +35,6 @@ CREATE TABLE eventos_artista (
     ciudad VARCHAR(50)
 );
 
--- 3. PROYECCIONES (Datos de otros microservicios necesarios localmente)
-CREATE TABLE proy_recintos (
-    id_recinto INT,
-    nombre VARCHAR(100),
-    ciudad VARCHAR(50)
-);
-
-CREATE TABLE proy_precios (
-    id_precio INT,
-    valor NUMERIC(10,2),
-    moneda VARCHAR(10)
-);
-
 -- 4. INSERCIÓN DE DATOS (Poblamiento)
 
 -- Artistas
@@ -74,14 +59,3 @@ INSERT INTO eventos_artista (id_artista, nombre_evento, fecha, ciudad) VALUES
 (2, 'Radical Optimism Tour', '2026-03-10', 'Santiago'),
 (3, 'Autopoiética Tour', '2025-11-20', 'Concepcion'),
 (4, 'M72 World Tour', '2026-01-25', 'Santiago');
-
--- Poblamiento de Proyecciones (Datos referenciales de Recintos y Precios)
-INSERT INTO proy_recintos (id_recinto, nombre, ciudad) VALUES
-(101, 'Estadio Nacional', 'Santiago'),
-(102, 'Movistar Arena', 'Santiago'),
-(103, 'Teatro Biobío', 'Concepcion');
-
-INSERT INTO proy_precios (id_precio, valor, moneda) VALUES
-(1, 45000.00, 'CLP'),
-(2, 85000.00, 'CLP'),
-(3, 150000.00, 'CLP');

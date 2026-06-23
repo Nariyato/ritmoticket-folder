@@ -26,13 +26,13 @@ public class SectorController {
         return ResponseEntity.ok(sectorService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<SectorResponse> findById(@PathVariable @NonNull Long id) {
         return ResponseEntity.ok(sectorService.findById(id));
     }
 
     // Endpoint clave para buscar qué sectores tiene un escenario
-    @GetMapping("/escenario/{idEscenario}")
+    @GetMapping("/idEscenario/{idEscenario}")
     public ResponseEntity<List<SectorResponse>> findByEscenarioId(@PathVariable @NonNull Long idEscenario) {
         return ResponseEntity.ok(sectorService.findByEscenarioId(idEscenario));
     }
@@ -43,14 +43,14 @@ public class SectorController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<SectorResponse> update(
             @PathVariable @NonNull Long id,
             @Valid @RequestBody SectorRequest request) {
         return ResponseEntity.ok(sectorService.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable @NonNull Long id) {
         sectorService.deleteById(id);
         return ResponseEntity.noContent().build();

@@ -3,43 +3,38 @@
 -- =========================================
 
 -- Conectarse a la base de datos específica
-\c boletos;
+ \c boletos;
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar errores de FK)
 DROP TABLE IF EXISTS reservas;
-DROP TABLE IF EXISTS zonas;
 DROP TABLE IF EXISTS boletos;
+DROP TABLE IF EXISTS zonas;
 DROP TABLE IF EXISTS proy_eventos;
-DROP TABLE IF EXISTS proy_usuarios;
 
 -- 2. CREACIÓN DE TABLAS DE PROYECCIÓN (Datos externos necesarios localmente)
-CREATE TABLE proy_usuarios (
-    id_usuario INT,
-    nombre VARCHAR(100),
-    correo VARCHAR(100)
-);
-
 CREATE TABLE proy_eventos (
-    id_evento INT,
+    id_evento INTEGER PRIMARY KEY,
     nombre_evento VARCHAR(100),
     fecha DATE
 );
 
 -- 3. CREACIÓN DE TABLAS MAESTRAS DEL MICROSERVICIO
-CREATE TABLE boletos (
-    id_boleto SERIAL PRIMARY KEY,
-    codigo VARCHAR(50),
-    tipo VARCHAR(50), -- Digital, Físico, VIP-Pass
-    estado VARCHAR(20), -- Disponible, Vendido, Reservado, Anulado
-    fecha_emision DATE
-);
-
 CREATE TABLE zonas (
     id_zona SERIAL PRIMARY KEY,
     nombre VARCHAR(50), -- VIP, Cancha General, Platea Alta
     capacidad INT,
     precio_base NUMERIC(10,2),
     estado VARCHAR(20) -- Activa, Agotada, En Mantenimiento
+);
+
+CREATE TABLE boletos (
+    id_boleto SERIAL PRIMARY KEY,
+    id_evento INT REFERENCES proy_eventos(id_evento), --agregado
+    id_zona INT REFERENCES zonas(id_zona),            --agregado
+    codigo VARCHAR(50),
+    tipo VARCHAR(50), -- Digital, Físico, VIP-Pass
+    estado VARCHAR(20), -- Disponible, Vendido, Reservado, Anulado
+    fecha_emision DATE
 );
 
 CREATE TABLE reservas (
@@ -52,12 +47,7 @@ CREATE TABLE reservas (
 
 -- 4. INSERCIÓN DE DATOS (Poblamiento)
 
--- Poblamiento de Proyecciones (Basado en usuarios y eventos conocidos)
-INSERT INTO proy_usuarios (id_usuario, nombre, correo) VALUES
-(7, 'Carlos Contreras', 'carlos@cliente.cl'),
-(8, 'Camila Cervantes', 'camila@cliente.cl'),
-(9, 'Cristian Castro', 'cristian@cliente.cl');
-
+-- Poblamiento de Proyecciones (Basado en eventos conocidos)
 INSERT INTO proy_eventos (id_evento, nombre_evento, fecha) VALUES
 (1, 'Gira Ven Aquí - Los Bunkers', '2025-12-15'),
 (2, 'Radical Optimism Tour - Dua Lipa', '2026-03-10');
@@ -70,12 +60,12 @@ INSERT INTO zonas (nombre, capacidad, precio_base, estado) VALUES
 ('Galería', 3000, 25000.00, 'Agotada');
 
 -- Poblamiento de Boletos
-INSERT INTO boletos (codigo, tipo, estado, fecha_emision) VALUES
-('TKT-LB-001', 'Digital', 'Vendido', '2025-05-01'), -- ID 1
-('TKT-LB-002', 'Digital', 'Disponible', '2025-05-01'), -- ID 2
-('TKT-DL-501', 'Físico', 'Reservado', '2025-05-10'), -- ID 3
-('TKT-DL-502', 'Digital', 'Vendido', '2025-05-10'), -- ID 4
-('TKT-GEN-999', 'Digital', 'Anulado', '2025-05-12'); -- ID 5
+INSERT INTO boletos (id_evento, id_zona, codigo, tipo, estado, fecha_emision) VALUES
+(1, 1, 'TKT-LB-001', 'Digital', 'Vendido', '2025-05-01'), -- ID 1
+(1, 2, 'TKT-LB-002', 'Digital', 'Disponible', '2025-05-01'), -- ID 2
+(1, 3, 'TKT-DL-501', 'Físico', 'Reservado', '2025-05-10'), -- ID 3
+(1, 4, 'TKT-DL-502', 'Digital', 'Vendido', '2025-05-10'), -- ID 4
+(2, 1, 'TKT-DL-999', 'Digital', 'Anulado', '2025-05-12'); -- ID 5
 
 -- Poblamiento de Reservas
 INSERT INTO reservas (id_boleto, fecha_reserva, estado, expiracion) VALUES

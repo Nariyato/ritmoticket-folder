@@ -6,7 +6,6 @@
 \c pagos
 
 -- 1. ELIMINACIÓN (Orden jerárquico inverso para evitar conflictos de FK)
-DROP TABLE IF EXISTS proy_usuarios;
 DROP TABLE IF EXISTS proy_compras;
 DROP TABLE IF EXISTS reembolsos;
 DROP TABLE IF EXISTS transacciones;
@@ -15,6 +14,7 @@ DROP TABLE IF EXISTS pagos;
 -- 2. CREACIÓN DE TABLAS MAESTRAS [
 CREATE TABLE pagos (
     id_pago SERIAL PRIMARY KEY,
+    id_compra INT,
     monto NUMERIC(10,2),
     metodo VARCHAR(50), -- WebPay, PayPal, Transferencia
     fecha_pago DATE,
@@ -44,31 +44,20 @@ CREATE TABLE proy_compras (
     estado VARCHAR(20)
 );
 
-CREATE TABLE proy_usuarios (
-    id_usuario INT,
-    nombre VARCHAR(100),
-    correo VARCHAR(100)
-);
-
 -- 4. INSERCIÓN DE DATOS (Poblamiento)
 
--- Poblamiento de Proyecciones (Sincronizado con Usuarios y Compras previos) 
-INSERT INTO proy_usuarios (id_usuario, nombre, correo) VALUES
-(7, 'Carlos Contreras', 'carlos@cliente.cl'),
-(8, 'Camila Cervantes', 'camila@cliente.cl'),
-(9, 'Cristian Castro', 'cristian@cliente.cl');
-
+-- Poblamiento de Proyecciones (Sincronizado con Compras previas) 
 INSERT INTO proy_compras (id_compra, total, estado) VALUES
-(1, 90000.00, 'Completada'),
-(2, 150000.00, 'Completada'),
-(3, 45000.00, 'Pendiente');
+(1, 90000.00, 'COMPLETADA'),
+(2, 150000.00, 'COMPLETADA'),
+(3, 45000.00, 'PENDIENTE');
 
--- Registro de Pagos
-INSERT INTO pagos (monto, metodo, fecha_pago, estado) VALUES
-(90000.00, 'WebPay', '2025-05-15', 'Aprobado'),   -- ID 1
-(150000.00, 'PayPal', '2025-05-16', 'Aprobado'),  -- ID 2
-(45000.00, 'Transferencia', '2025-05-18', 'Pendiente'), -- ID 3
-(25000.00, 'WebPay', '2025-05-10', 'Reembolsado'); -- ID 4 (Anterior)
+-- Registro de Pagos (id_compra referencia lógica a ms-compras, compras 1-3)
+INSERT INTO pagos (id_compra, monto, metodo, fecha_pago, estado) VALUES
+(1, 90000.00, 'WEBPAY', '2025-05-15', 'APROBADO'),        -- Pago compra 1 (Carlos)
+(2, 150000.00, 'PAYPAL', '2025-05-16', 'APROBADO'),        -- Pago compra 2 (Camila)
+(3, 45000.00, 'TRANSFERENCIA', '2025-05-18', 'PENDIENTE'), -- Pago compra 3 (Cristian)
+(NULL, 25000.00, 'WEBPAY', '2025-05-10', 'REEMBOLSADO');  -- Pago histórico sin compra vinculada
 
 -- Registro de Transacciones Bancarias
 INSERT INTO transacciones (id_pago, codigo, banco, estado) VALUES
