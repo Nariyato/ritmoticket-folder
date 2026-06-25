@@ -53,8 +53,9 @@ INSERT INTO generos (nombre, descripcion, popularidad, estado) VALUES
 ('Indie', 'Producciones independientes y alternativas', 60, 'Activo');
 
 -- Catálogo de Eventos (La oferta disponible para el usuario)
+-- id_artista → artistas.id_artista (ms-artistas) | id_recinto → recintos.id_recinto (ms-recintos)
 INSERT INTO eventos (nombre_evento, categoria, fecha, estado, id_artista, id_recinto) VALUES
-('Gira Ven Aquí - Los Bunkers', 'Masivos', '2025-12-15', 'Disponible', 1, 101),
-('Radical Optimism Tour - Dua Lipa', 'Masivos', '2026-03-10', 'Agotado', 2, 102),
-('Lollapalooza Chile 2026', 'Festivales', '2026-03-21', 'Preventa', 5, 103),
-('Autopoiética Tour - Mon Laferte', 'Íntimos', '2025-11-20', 'Disponible', 4, 103);
+('Gira Ven Aquí - Los Bunkers', 'Masivos', '2025-12-15', 'Disponible', 1, 1),   -- Estadio Nacional
+('Radical Optimism Tour - Dua Lipa', 'Masivos', '2026-03-10', 'Agotado', 2, 2), -- Movistar Arena
+('Lollapalooza Chile 2026', 'Festivales', '2026-03-21', 'Preventa', 5, 4),       -- Espacio Riesco
+('Autopoiética Tour - Mon Laferte', 'Íntimos', '2025-11-20', 'Disponible', 4, 3); -- Teatro Biobío

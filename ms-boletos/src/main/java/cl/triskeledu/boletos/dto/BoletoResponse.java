@@ -1,21 +1,24 @@
 package cl.triskeledu.boletos.dto;
 
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import org.springframework.hateoas.RepresentationModel;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * DTO de respuesta para Boleto con soporte HATEOAS.
+ */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class BoletoResponse {
+@EqualsAndHashCode(callSuper = false)
+public class BoletoResponse extends RepresentationModel<BoletoResponse> {
+
     private Integer idBoleto;
-    private Integer idEvento; // nombre ¿
-    private Integer idZona; // nombre ¿
+    private Integer idEvento;
+    private Integer idZona;
     private String codigo;
-    private String tipo; 
-    private String estado; // tiene que estar¿
+    private String tipo;
+    private String estado;
     private LocalDate fechaEmision;
 }

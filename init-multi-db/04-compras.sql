@@ -74,14 +74,14 @@ INSERT INTO carritos (id_usuario, fecha_creacion, estado, total) VALUES
 (9, '2025-05-18', 'Activo', 45000.00),
 (7, '2025-05-20', 'Activo', 0.00); -- Nuevo carrito vacío para Carlos
 
--- Poblamiento de Proyecciones (Referencias cruzadas)
+-- Poblamiento de Proyecciones (id_pago → pagos.id_pago | proy_boletos → boletos)
 INSERT INTO proy_pagos (id_pago, monto, estado) VALUES
-(501, 90000.00, 'Aprobado'),
-(502, 150000.00, 'Aprobado'),
-(503, 45000.00, 'Procesando');
+(1, 90000.00, 'APROBADO'),
+(2, 150000.00, 'APROBADO'),
+(3, 45000.00, 'PENDIENTE');
 
 INSERT INTO proy_boletos (id_boleto, id_evento, id_zona, codigo, estado) VALUES
-(1, 1, 1, 'TKT-LB-001', 'Vendido'),
+(1, 1, 2, 'TKT-LB-001', 'Vendido'),
 (2, 1, 2, 'TKT-LB-002', 'Vendido'),
-(3, 1, 3, 'TKT-DL-501', 'Reservado'),
-(4, 1, 4, 'TKT-DL-502', 'Vendido');
+(3, 2, 2, 'TKT-DL-501', 'Reservado'),
+(4, 2, 1, 'TKT-DL-502', 'Vendido');

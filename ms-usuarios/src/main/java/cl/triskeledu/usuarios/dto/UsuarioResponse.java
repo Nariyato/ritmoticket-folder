@@ -1,15 +1,21 @@
 package cl.triskeledu.usuarios.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * DTO de respuesta para Usuario con soporte HATEOAS.
+ *
+ * Al extender RepresentationModel, Jackson serializa el campo "_links"
+ * cuando el controlador agrega links con .add(Link...).
+ * La contraseña nunca se expone aquí.
+ */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class UsuarioResponse {
+@EqualsAndHashCode(callSuper = false)
+public class UsuarioResponse extends RepresentationModel<UsuarioResponse> {
+
     private Integer idUsuario;
     private String nombre;
     private String apellido;

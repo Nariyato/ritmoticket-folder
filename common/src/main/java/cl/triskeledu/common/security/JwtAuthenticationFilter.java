@@ -74,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // 5. Guardar el token en credentials para que FeignClientInterceptor lo propague
                 UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(correo, null, authorities);
+                    new UsernamePasswordAuthenticationToken(correo, token, authorities);
 
                 // 6. Inyectar en el SecurityContext para que Spring Security lo use
                 SecurityContextHolder.getContext().setAuthentication(authentication);

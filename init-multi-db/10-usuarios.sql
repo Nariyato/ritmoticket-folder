@@ -88,6 +88,7 @@ INSERT INTO credenciales_usuarios (usuario_correo, ultimo_acceso, bloqueado, int
 
 -- Poblamiento de Proyecciones (Sincronizado con Boletos anteriores)
 INSERT INTO proy_boletos (id_boleto, id_evento, id_zona, codigo, estado) VALUES
-(1, 1, 1, 'TKT-LB-001', 'Vendido'),
-(3, 1, 3, 'TKT-DL-501', 'Reservado'),
-(4, 1, 4, 'TKT-DL-502', 'Vendido');
+(1, 1, 2, 'TKT-LB-001', 'Vendido'),
+(2, 1, 2, 'TKT-LB-002', 'Vendido'),
+(3, 2, 2, 'TKT-DL-501', 'Reservado'),
+(4, 2, 1, 'TKT-DL-502', 'Vendido');

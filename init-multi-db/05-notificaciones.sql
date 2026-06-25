@@ -46,9 +46,9 @@ CREATE TABLE proy_compras (
 
 -- Poblamiento de Proyecciones (Sincronizado con microservicio de Compras)
 INSERT INTO proy_compras (id_compra, total, estado) VALUES
-(1, 90000.00, 'Completada'),
-(2, 150000.00, 'Completada'),
-(3, 45000.00, 'Pendiente');
+(1, 90000.00, 'COMPLETADA'),
+(2, 150000.00, 'COMPLETADA'),
+(3, 45000.00, 'PENDIENTE');
 
 -- Notificaciones Generales
 INSERT INTO notificaciones (mensaje, tipo, fecha_envio, estado) VALUES
@@ -64,6 +64,6 @@ INSERT INTO correos (destinatario, asunto, fecha, estado) VALUES
 
 -- Historial de SMS (Mensajería rápida)
 INSERT INTO sms (telefono, mensaje, fecha, estado) VALUES
-('+56912345678', 'RT-Ticket: Carlos, tu código para Los Bunkers es TKT-LB-001', '2025-05-15', 'Enviado'),
+('+56933333333', 'RT-Ticket: Carlos, tu código para Los Bunkers es TKT-LB-001', '2025-05-15', 'Enviado'),
 ('+56987654321', 'RT-Ticket: Camila, disfruta el show de Dua Lipa!', '2026-03-10', 'Pendiente'),
 ('+56955554433', 'RT-Ticket: Cristian, tu reserva expira en 2 horas.', '2025-05-18', 'Enviado');

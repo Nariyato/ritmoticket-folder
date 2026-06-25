@@ -74,11 +74,11 @@ INSERT INTO auditorias (accion, usuario, fecha, estado) VALUES
 
 -- Poblamiento de Proyecciones (Consistente con Compras e IDs previos)
 INSERT INTO proy_pagos (id_pago, monto, estado) VALUES
-(1, 90000.00, 'Aprobado'),
-(2, 150000.00, 'Aprobado'),
-(3, 45000.00, 'Pendiente');
+(1, 90000.00, 'APROBADO'),
+(2, 150000.00, 'APROBADO'),
+(3, 45000.00, 'PENDIENTE');
 
 INSERT INTO proy_compras (id_compra, total, estado) VALUES
-(1, 90000.00, 'Completada'),
-(2, 150000.00, 'Completada'),
-(3, 45000.00, 'Pendiente');
+(1, 90000.00, 'COMPLETADA'),
+(2, 150000.00, 'COMPLETADA'),
+(3, 45000.00, 'PENDIENTE');

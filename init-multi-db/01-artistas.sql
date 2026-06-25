@@ -45,17 +45,17 @@ INSERT INTO artistas (nombre_artistico, pais, genero, estado) VALUES
 ('Mon Laferte', 'Chile', 'Indie/Pop', 'En Gira'),      -- ID 4
 ('Metallica', 'EE.UU.', 'Heavy Metal', 'Activo');      -- ID 5
 
--- Albums
+-- Albums (id_artista alineado con artistas.id_artista)
 INSERT INTO albums (id_artista, titulo, fecha_lanzamiento, tipo) VALUES
-(1, 'Vida de Perros', '2025-09-08', 'Estudio'),
-(2, 'Noviembre', '2023-11-01', 'Estudio'),
-(3, 'Future Nostalgia', '2020-03-27', 'Estudio'),
-(4, 'Un Verano Sin Ti', '2022-05-06', 'Estudio'),
-(5, 'Autopoiética', '2023-11-10', 'Estudio');
+(1, 'Vida de Perros', '2025-09-08', 'Estudio'),        -- Los Bunkers
+(2, 'Radical Optimism', '2024-05-03', 'Estudio'),      -- Dua Lipa
+(3, 'Un Verano Sin Ti', '2022-05-06', 'Estudio'),      -- Bad Bunny
+(4, 'Autopoiética', '2023-11-10', 'Estudio'),          -- Mon Laferte
+(5, '72 Seasons', '2023-04-14', 'Estudio');            -- Metallica
 
 -- Eventos de Artista (Próximos conciertos registrados en el perfil del artista)
 INSERT INTO eventos_artista (id_artista, nombre_evento, fecha, ciudad) VALUES
 (1, 'Gira Ven Aquí', '2025-12-15', 'Santiago'),
 (2, 'Radical Optimism Tour', '2026-03-10', 'Santiago'),
-(3, 'Autopoiética Tour', '2025-11-20', 'Concepcion'),
-(4, 'M72 World Tour', '2026-01-25', 'Santiago');
+(4, 'Autopoiética Tour', '2025-11-20', 'Concepcion'),
+(5, 'M72 World Tour', '2026-01-25', 'Santiago');

@@ -50,6 +50,13 @@
         </dependency>
         <!-- [SWAGGER-FIN] -->
 
+        <!--  [HATEOAS-INI]  -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+        <!--  [HATEOAS-FIN]  -->
+
         <!-- Libreria comun compartida -->
         <dependency>
             <groupId>cl.triskeledu</groupId>

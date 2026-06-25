@@ -2,6 +2,10 @@ package cl.triskeledu.catalogo.controller;
 
 import java.util.List;
 
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -38,6 +42,39 @@ public class EventoController {
 
     private final EventoService service;
 
+    /**
+     * Agrega links de navegación HATEOAS al evento del catálogo:
+     * operaciones CRUD y verificaciones de integridad con artista/recinto.
+     */
+    private EventoResponseDTO addLinks(EventoResponseDTO evento) {
+        Integer id = evento.getIdEvento();
+
+        evento.add(linkTo(methodOn(EventoController.class).obtener(id)).withSelfRel());
+
+        evento.add(linkTo(methodOn(EventoController.class).actualizar(id, null))
+                .withRel("update").withTitle("PUT - Actualizar evento"));
+
+        evento.add(linkTo(methodOn(EventoController.class).eliminar(id))
+                .withRel("delete").withTitle("DELETE - Eliminar evento"));
+
+        if (evento.getIdArtista() != null) {
+            evento.add(linkTo(methodOn(EventoController.class).existePorArtista(evento.getIdArtista()))
+                    .withRel("verificar-artista")
+                    .withTitle("GET - Verificar eventos por artista"));
+        }
+
+        if (evento.getIdRecinto() != null) {
+            evento.add(linkTo(methodOn(EventoController.class).existePorRecinto(evento.getIdRecinto()))
+                    .withRel("verificar-recinto")
+                    .withTitle("GET - Verificar eventos por recinto"));
+        }
+
+        evento.add(linkTo(methodOn(EventoController.class).listar())
+                .withRel("all").withTitle("GET - Listado de eventos"));
+
+        return evento;
+    }
+
     @Operation(summary = "Obtener todos los eventos", description = "Retorna la lista completa de eventos del catálogo")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente",
@@ -46,8 +83,16 @@ public class EventoController {
         @ApiResponse(responseCode = "403", description = "Sin permisos para consultar eventos", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<EventoResponseDTO>> listar() {
-        return ResponseEntity.ok(service.obtenerTodos());
+    public ResponseEntity<CollectionModel<EventoResponseDTO>> listar() {
+        List<EventoResponseDTO> eventos = service.obtenerTodos();
+        eventos.forEach(this::addLinks);
+
+        CollectionModel<EventoResponseDTO> collection = CollectionModel.of(
+                eventos,
+                linkTo(methodOn(EventoController.class).listar()).withSelfRel()
+        );
+
+        return ResponseEntity.ok(collection);
     }
 
     @Operation(summary = "Obtener evento por ID", description = "Retorna un evento según su identificador único")
@@ -62,7 +107,7 @@ public class EventoController {
     public ResponseEntity<EventoResponseDTO> obtener(
             @Parameter(description = "ID del evento", required = true, example = "1")
             @PathVariable @NonNull Integer id) {
-        return ResponseEntity.ok(service.buscarPorId(id));
+        return ResponseEntity.ok(addLinks(service.buscarPorId(id)));
     }
 
     @Operation(summary = "Crear un nuevo evento", description = "Registra un nuevo evento en el catálogo")
@@ -100,7 +145,7 @@ public class EventoController {
                 description = "Nuevos datos del evento", required = true,
                 content = @Content(schema = @Schema(implementation = EventoRequestDTO.class)))
             @Valid @RequestBody EventoRequestDTO request) {
-        return ResponseEntity.ok(service.actualizar(id, request));
+        return ResponseEntity.ok(addLinks(service.actualizar(id, request)));
     }
 
     @Operation(summary = "Eliminar un evento", description = "Elimina un evento del catálogo por su ID")
@@ -147,7 +192,7 @@ public class EventoController {
     })
     @GetMapping("/existe/recinto/{idRecinto}")
     public ResponseEntity<Boolean> existePorRecinto(
-            @Parameter(description = "ID del recinto a verificar", required = true, example = "101")
+            @Parameter(description = "ID del recinto a verificar", required = true, example = "3")
             @PathVariable Long idRecinto) {
         return ResponseEntity.ok(service.existePorRecinto(idRecinto));
     }
@@ -166,6 +211,7 @@ public class EventoController {
     public ResponseEntity<Boolean> existePorId(
             @Parameter(description = "ID del evento a verificar", required = true, example = "1")
             @PathVariable Integer idEvento) {
+        // Endpoint utilitario (devuelve Boolean): no aplica HATEOAS
         return ResponseEntity.ok(service.existePorId(idEvento));
     }
 }

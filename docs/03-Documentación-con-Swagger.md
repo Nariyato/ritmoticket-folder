@@ -71,6 +71,18 @@ SpringDoc OpenAPI está integrado en **tres capas** del proyecto:
 | ms-catalogo   | http://localhost:9002/swagger-ui.html | http://localhost:9002/v3/api-docs |
 | ms-recursos   | http://localhost:9003/swagger-ui.html | http://localhost:9003/v3/api-docs |
 
+### RitmoTicket — URLs de acceso (puertos actuales)
+
+| Microservicio | Puerto | Swagger UI | API principal documentada |
+|---------------|--------|------------|---------------------------|
+| ms-artistas | 9001 | http://localhost:9001/swagger-ui.html | `/api/v1/artistas` |
+| ms-boletos | 9002 | http://localhost:9002/swagger-ui.html | `/api/v1/boletos` |
+| **ms-catalogo** | **9003** | **http://localhost:9003/swagger-ui.html** | **`/api/v1/eventos`** (anotaciones en `EventoController`) |
+| ms-compras | 9004 | http://localhost:9004/swagger-ui.html | `/api/v1/compras` |
+| ms-usuarios | 9010 | http://localhost:9010/swagger-ui.html | `/api/v1/auth/login` |
+
+> En RitmoTicket el catálogo expone **eventos** (`/api/v1/eventos`), no `/api/v1/libros`. Swagger en catálogo requiere JWT (rol según `SecurityConfig`); Swagger UI está en `permitAll`.
+
 ---
 
 ## 3. Dependencias Maven

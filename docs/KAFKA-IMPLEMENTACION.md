@@ -1,6 +1,6 @@
 # Implementación Kafka en RitmoTicket
 
-**Fecha:** 16 de junio de 2026  
+**Fecha:** 24 de junio de 2026  
 **Alcance:** Completar la arquitectura event-driven parcialmente implementada en el proyecto.
 
 ---
@@ -160,11 +160,25 @@ boletoEventProducer.sendCreated(BoletoCreatedEvent.builder()
 
 ---
 
-### 4.7 `ms-reportes` — Consumers de compras y pagos
+### 4.8 `ms-catalogo` — Eventos y publicación Kafka
+
+**Archivo principal:** `EventoService.java` (clase `@Service` única, sin interfaz `*Impl`)
+
+**Qué hace:**
+
+- CRUD de eventos en `catalogo.eventos`
+- Publica `catalogo.evento.{created|updated|deleted}` vía `EventoEventProducer`
+- Enriquece `GET` con Feign a `ms-artistas` y `ms-recintos` (`id_artista`, `id_recinto` deben existir en esos MS)
+
+**API:** `POST/GET/PUT/DELETE /api/v1/eventos` (requiere JWT según rol)
+
+---
+
+### 4.9 `ms-reportes` — Consumers de compras y pagos
 
 **Archivos nuevos:** `CompraEventConsumer.java`, `PagoEventConsumer.java`
 
-**Archivo modificado:** `SyncService.java` — antes tenía un stub vacío; ahora sincroniza `proy_compras` y `proy_pagos` desde los eventos.
+**Archivo modificado:** `SyncService.java` — sincroniza `proy_compras` y `proy_pagos` desde los eventos.
 
 **Por qué:** Reportes consolida información de múltiples dominios para estadísticas y auditoría. Kafka alimenta sus tablas de proyección de forma desacoplada.
 
@@ -177,8 +191,8 @@ boletoEventProducer.sendCreated(BoletoCreatedEvent.builder()
 **Actores:** Administrador del sistema  
 **Flujo:**
 
-1. El admin crea el evento *"Los Bunkers en Movistar Arena"* en `ms-catalogo`.
-2. `EventoServiceImpl` guarda el evento y llama a `EventoEventProducer.sendCreated()`.
+1. El admin crea el evento *"Gira Ven Aquí - Los Bunkers"* en `ms-catalogo` (`id_artista=1`, `id_recinto=1`).
+2. `EventoService` guarda el evento y llama a `EventoEventProducer.sendCreated()`.
 3. Kafka publica en `catalogo.evento.created`.
 4. `ms-boletos` recibe el evento en `EventoEventConsumer.onEventoCreated()`.
 5. `EventoProyeccionService` crea/actualiza un registro en `proy_eventos` (tabla local de boletos).
@@ -190,8 +204,10 @@ boletoEventProducer.sendCreated(BoletoCreatedEvent.builder()
               ↓
          Kafka: catalogo.evento.created
               ↓
-         ms-boletos.proy_eventos ← nueva fila idEvento=15
+         ms-boletos.proy_eventos ← fila idEvento=1 (ej. seed)
 ```
+
+> **Datos semilla:** Los scripts `init-multi-db/03-catalogo.sql` y `02-boletos.sql` ya incluyen 4 eventos alineados (ids 1–4). Tras recrear las BDD, `proy_eventos` coincide con `catalogo.eventos` sin pasar por Kafka.
 
 ---
 
@@ -200,14 +216,23 @@ boletoEventProducer.sendCreated(BoletoCreatedEvent.builder()
 **Actores:** Operador de boletos  
 **Flujo:**
 
-1. Se crean 500 boletos para el evento 15 en `ms-boletos` (`POST /api/v1/boletos`).
+1. Se crean boletos para el evento 1 (Los Bunkers) o evento 2 (Dua Lipa) en `ms-boletos` (`POST /api/v1/boletos`).
 2. Por cada boleto, `BoletoService.create()` publica `boletos.boleto.created`.
 3. Tres servicios reaccionan en paralelo:
    - **ms-compras** → inserta en `proy_boletos` (sabe qué boletos puede vender)
-   - **ms-precios** → inserta en `proy_boletos` (referencia para cálculos de precio)
+   - **ms-precios** → inserta en `proy_boletos` (referencia local de inventario)
    - **ms-usuarios** → inserta en `proy_boletos` (historial local si aplica)
 
-**Utilidad:** Cuando un cliente agrega el boleto #101 al carrito, compras valida contra su proyección local que el boleto existe y está `Disponible`, sin una llamada Feign extra en ese momento.
+**Utilidad:** Cuando un cliente agrega el boleto **#3** (`TKT-DL-501`, Dua Lipa, Cancha) al carrito, compras valida contra su proyección local que el boleto existe y cuál es su estado, sin una llamada Feign extra en ese momento.
+
+**Seed de referencia:**
+
+| id_boleto | id_evento | Código | Estado |
+|-----------|-----------|--------|--------|
+| 1 | 1 | TKT-LB-001 | Vendido |
+| 2 | 1 | TKT-LB-002 | Vendido |
+| 3 | 2 | TKT-DL-501 | Reservado |
+| 4 | 2 | TKT-DL-502 | Vendido |
 
 ```
 [Operador] → POST /api/v1/boletos (boletos) × 500
@@ -227,11 +252,11 @@ boletoEventProducer.sendCreated(BoletoCreatedEvent.builder()
 **Actores:** Carlos (usuario id=7)  
 **Flujo:**
 
-1. Carlos confirma carrito con 2 boletos → `POST /api/v1/compras` en `ms-compras`.
-2. `CompraService.guardar()` calcula total vía Feign (`BoletoClient`), guarda la compra y publica `compras.compra.created`:
+1. Carlos confirma compra con boletos 1 y 2 (Los Bunkers) → `POST /api/v1/compras` en `ms-compras`.
+2. `CompraService.guardar()` calcula total vía Feign (`BoletoClient`: 45.000 + 45.000), guarda la compra y publica `compras.compra.created`:
 
    ```json
-   { "idCompra": 10, "idUsuario": 7, "total": 90000, "estado": "PENDIENTE" }
+   { "idCompra": 1, "idUsuario": 7, "total": 90000, "estado": "PENDIENTE" }
    ```
 
 3. Consumidores reaccionan:
@@ -248,15 +273,15 @@ boletoEventProducer.sendCreated(BoletoCreatedEvent.builder()
 **Actores:** Carlos paga con WebPay  
 **Flujo:**
 
-1. `ms-pagos` registra el pago → `POST /api/v1/pagos`.
-2. `PagoService.guardar()` publica `pagos.pago.created`:
+1. `ms-pagos` registra o aprueba el pago → `POST /api/v1/pagos` o `PUT /api/v1/pagos/aprobar/id/{id}`.
+2. `PagoService` publica `pagos.pago.created` o `pagos.pago.updated`:
 
    ```json
-   { "idPago": 5, "monto": 90000, "metodo": "WEBPAY", "estado": "APROBADO" }
+   { "idPago": 1, "monto": 90000, "metodo": "WEBPAY", "estado": "APROBADO" }
    ```
 
 3. Consumidores:
-   - **ms-compras** → actualiza `proy_pagos` (compras sabe que el pago existe)
+   - **ms-compras** → actualiza `proy_pagos` (`id_pago` alineado con `pagos.id_pago`, no IDs ficticios 501+)
    - **ms-reportes** → actualiza `proy_pagos` (reporte financiero)
 
 **Utilidad:** Reportes puede generar *"Ventas Mensuales - Mayo 2025"* cruzando proyecciones locales de compras y pagos, sin exportar CSVs manualmente ni hacer joins entre bases de datos.
@@ -268,9 +293,9 @@ boletoEventProducer.sendCreated(BoletoCreatedEvent.builder()
 **Actores:** Sistema de compras reserva un boleto  
 **Flujo:**
 
-1. `ms-boletos` actualiza boleto #101 de `Disponible` → `Reservado` (`PUT /api/v1/boletos/101`).
+1. `ms-boletos` actualiza boleto **#3** de `Reservado` → `Vendido` (`PUT /api/v1/boletos/id/3`).
 2. `BoletoService.update()` publica `boletos.boleto.updated`.
-3. `ms-compras`, `ms-precios` y `ms-usuarios` actualizan `estado` en su `proy_boletos`.
+3. `ms-compras`, `ms-precios` y `ms-usuarios` actualizan `estado` (y `id_evento` si aplica) en su `proy_boletos`.
 
 **Utilidad:** Otro cliente que intente comprar el mismo boleto verá en la proyección de compras que ya no está disponible. Este es el evento más crítico según los comentarios en `BoletoUpdatedEvent`:
 
@@ -309,16 +334,16 @@ Esto hace los consumidores **idempotentes**: si Kafka reenvía un mensaje, el re
 
 ---
 
-## 7. Qué quedó preparado pero aún no se emite
+## 7. Eventos `updated` (estado actual)
 
-Los eventos `*.updated` ya tienen **consumers listos**, pero los **producers** solo emiten `created` por ahora:
+| Evento | Producer conectado | Cuándo se emite |
+|--------|-------------------|-----------------|
+| `compras.compra.updated` | `CompraService.confirmar()` | Al aprobar pago y marcar compra `COMPLETADA` |
+| `pagos.pago.updated` | `PagoService.aprobar()` | Al pasar pago a `APROBADO` |
+| `catalogo.evento.updated` | `EventoService.actualizar()` | Al editar un evento |
+| `boletos.boleto.updated` | `BoletoService.update()` | Al cambiar estado o datos del boleto |
 
-|         Evento           |      Cuándo se emitirá (próxima fase Feign)       |
-| ------------------------ | ------------------------------------------------- |
-| `compras.compra.updated` | Al confirmar o cancelar una compra                |
-| `pagos.pago.updated`     | Al cambiar estado del pago (Fallido, Reembolsado) |
-
-La infraestructura Kafka ya está preparada; solo falta conectar esos flujos de negocio cuando se complete la integración Feign.
+Los consumers de `*.updated` ya estaban implementados; los producers de compra y pago se conectaron en el flujo de confirmación/aprobación.
 
 ---
 
@@ -330,6 +355,8 @@ La infraestructura Kafka ya está preparada; solo falta conectar esos flujos de 
 run-dockers.bat          REM Postgres + Kafka
 launch.bat               REM Eureka + microservicios
 ```
+
+Cargar datos iniciales con los scripts `init-multi-db/*.sql` (orden 00 → 10). Si las BDD ya existían con un seed antiguo, recrearlas o aplicar migración manual para alinear `id_recinto`, boletos y `proy_*`.
 
 ### Secuencia sugerida
 
@@ -347,8 +374,8 @@ Abrir `http://localhost:8080` (Kafka UI del docker-compose) y confirmar que los 
 Con perfil `dev`, buscar en consola:
 
 ```
-Enviando evento Kafka → topic: boletos.boleto.created, key: 101
-Evento recibido → boleto created, idBoleto: 101
+Enviando evento Kafka → topic: boletos.boleto.created, key: 3
+Evento recibido → boleto created, idBoleto: 3
 ```
 
 ---
@@ -361,7 +388,7 @@ Evento recibido → boleto created, idBoleto: 101
 | **¿Por qué?**             | Cada microservicio necesita datos de otros sin acoplarse a sus bases de datos                   |
 | **¿Qué faltaba?**         | El producer de boletos no estaba conectado; no existían eventos de compra/pago                  |
 | **¿Beneficio inmediato?** | Las tablas `proy_*` se sincronizan solas al crear eventos, boletos, compras y pagos             |
-| **¿Próximo paso?**        | Completar Feign clients y emitir eventos `updated` en flujos de confirmación                    |
+| **¿Próximo paso?**        | Marcar boletos vendidos al confirmar compra; notificaciones automáticas; Gateway |
 
 ---
 
@@ -375,6 +402,10 @@ common/
   event/PagoEvent.java
   event/PagoCreatedEvent.java
   event/PagoUpdatedEvent.java
+
+ms-catalogo/
+  service/EventoService.java                    (productor eventos + Feign enriquecimiento)
+  event/EventoEventProducer.java
 
 ms-boletos/
   service/BoletoService.java                    (modificado)
@@ -392,7 +423,7 @@ ms-compras/
   config/KafkaTopicConfig.java
 
 ms-precios/
-  model/ProyBoleto.java                         (modificado)
+  service/PrecioService.java                    (CRUD local; sin Kafka producer)
   service/ProyBoletoService.java
   event/BoletoEventConsumer.java
 
@@ -424,6 +455,3 @@ ms-reportes/
 ---
 
 *Documento generado como parte de la implementación Kafka en RitmoTicket.*
-
-Falta agregar logs en los producer
-revisar bien el service de sync (sincronizacion) del ms-reportes
