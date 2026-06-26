@@ -16,19 +16,19 @@
     <!-- Herencia del proyecto padre que centraliza configuracion, BOM y versiones -->
     <parent>
         <groupId>cl.triskeledu</groupId>
-        <artifactId>ritmoticket</artifactId>
+        <artifactId>biblioteca</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!-- Coordenadas GAV (GroupId, ArtifactId, Version) de este modulo -->
     <groupId>cl.triskeledu</groupId>
-    <artifactId>cl-triskeledu-boletos</artifactId>
+    <artifactId>cl-triskeledu-usuarios</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <!-- Nombre y descripcion del modulo -->
-    <name>Modulo de Boletos</name>
-    <description>Servicio de Boletos.</description>
+    <name>Modulo de Usuarios</name>
+    <description>Servicio de Usuarios.</description>
 
     <!--
         *******************************************
@@ -41,26 +41,29 @@
 
     <!-- Dependencias necesarias para este microservicio -->
     <dependencies>
-    
-        
+
+        <!-- [SWAGGER-INI] -->
         <!-- Springdoc OpenAPI: generacion automatica de documentacion Swagger UI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
-        
+        <!-- [SWAGGER-FIN] -->
+
+        <!--  [HATEOAS-INI]  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-hateoas</artifactId>
         </dependency>
+        <!--  [HATEOAS-FIN]  -->
 
-    <dependency>
+        <!-- Libreria comun compartida -->
+        <dependency>
             <groupId>cl.triskeledu</groupId>
             <artifactId>cl-triskeledu-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-         <!-- Spring Kafka -->
+        <!-- Spring Kafka -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
@@ -130,14 +133,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Generador de datos aleatorios para pruebas unitarias -->
-        <dependency>
-            <groupId>net.datafaker</groupId>
-            <artifactId>datafaker</artifactId>
-            <version>2.2.2</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Cliente Eureka: registro y descubrimiento de este microservicio -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -173,7 +168,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>cl.triskeledu.boletos.RitmoticketBoletosApplication</mainClass>
+                    <mainClass>cl.triskeledu.usuarios.BibliotecaUsuariosApplication</mainClass>
                 </configuration>
             </plugin>
 
@@ -200,6 +195,11 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering> </resource>
+        </resources>
     </build>
 
 </project>

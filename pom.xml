@@ -70,6 +70,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <cl-triskeledu-common.version>0.0.1-SNAPSHOT</cl-triskeledu-common.version>
         <spring-kafka.version>3.3.5</spring-kafka.version>
         <spring-boot-actuator.version>3.5.14</spring-boot-actuator.version>
@@ -272,6 +273,12 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>  
 
         </plugins>
 

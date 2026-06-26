@@ -1,10 +1,48 @@
-version: '3.8'
+# ============================================================
+# Docker Compose - RitmoTicket Triskeledu (completo)
+# ============================================================
+# Infraestructura + Eureka + API Gateway + 10 microservicios.
+#
+# Orden de arranque (healthchecks):
+#   1. postgres, kafka
+#   2. eureka-server, kafka-ui
+#   3. api-gateway  (espera eureka)
+#   4. microservicios (esperan eureka + postgres + kafka + gateway)
+#
+# Punto de entrada API:  http://localhost:9000
+# Eureka dashboard:      http://localhost:8761
+# Kafka UI:              http://localhost:8080
+# PostgreSQL (host):     localhost:5433
+#
+# Antes del primer build:
+#   mvn clean package -DskipTests
+# ============================================================
+
+x-ms-common-env: &ms-common-env
+  SPRING_PROFILES_ACTIVE: dev
+  SPRING_DATASOURCE_USERNAME: postgres
+  SPRING_DATASOURCE_PASSWORD: "123"
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+  # En Docker los MS se descubren por nombre de servicio (Feign / lb://)
+  EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+
+x-ms-common-depends: &ms-common-depends
+  eureka-server:
+    condition: service_healthy
+  postgres:
+    condition: service_healthy
+  kafka:
+    condition: service_healthy
+  api-gateway:
+    condition: service_healthy
 
 services:
 
+  # -- Infraestructura: Base de Datos --------------------------
   postgres:
     image: postgres
-    container_name: postgres_rdbms
+    container_name: postgres-rdbms
     ports:
       - "5433:5432"
     environment:
@@ -13,10 +51,16 @@ services:
       POSTGRES_DB: main_postgres_db
     volumes:
       - ./init-multi-db:/docker-entrypoint-initdb.d
-      # ↑ PostgreSQL ejecuta automáticamente en orden alfabético
-      #   todos los .sql que encuentre en esa carpeta al primer arranque.
-      #   Por eso los scripts están numerados 00, 01, 02...
+    networks:
+      - ritmoticket-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
 
+  # -- Infraestructura: Kafka --
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka_broker
@@ -34,14 +78,235 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
       CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+    networks:
+      - ritmoticket-network
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 30s
 
+  # -- Infraestructura: Kafka UI -------------------------------
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka_ui
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka_broker:29092
+    networks:
+      - ritmoticket-network
+
+  # -- Descubrimiento: Eureka Server ---------------------------
+  eureka-server:
+    build: ./eureka
+    image: ritmoticket-eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    networks:
+      - ritmoticket-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+
+  # -- Enrutamiento: API Gateway (puerto único :9000) --
+  api-gateway:
+    build: ./api-gateway
+    image: ritmoticket-api-gateway
+    container_name: api-gateway
+    ports:
+      - "9000:9000"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+    networks:
+      - ritmoticket-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9000/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+
+  # -- ms-artistas (:9001) --
+  ms-artistas:
+    build: ./ms-artistas
+    image: ritmoticket-ms-artistas
+    container_name: ms-artistas
+    ports:
+      - "9001:9001"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9001
+      EUREKA_INSTANCE_HOSTNAME: ms-artistas
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/artistas
+    networks:
+      - ritmoticket-network
+
+  # -- ms-boletos (:9002) --
+  ms-boletos:
+    build: ./ms-boletos
+    image: ritmoticket-ms-boletos
+    container_name: ms-boletos
+    ports:
+      - "9002:9002"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9002
+      EUREKA_INSTANCE_HOSTNAME: ms-boletos
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/boletos
+    networks:
+      - ritmoticket-network
+
+  # -- ms-catalogo / eventos (:9003) --
+  ms-catalogo:
+    build: ./ms-catalogo
+    image: ritmoticket-ms-catalogo
+    container_name: ms-catalogo
+    ports:
+      - "9003:9003"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9003
+      EUREKA_INSTANCE_HOSTNAME: ms-catalogo
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/catalogo
+    networks:
+      - ritmoticket-network
+
+  # -- ms-compras (:9004) --
+  ms-compras:
+    build: ./ms-compras
+    image: ritmoticket-ms-compras
+    container_name: ms-compras
+    ports:
+      - "9004:9004"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9004
+      EUREKA_INSTANCE_HOSTNAME: ms-compras
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/compras
+    networks:
+      - ritmoticket-network
+
+  # -- ms-notificaciones (:9005) --
+  ms-notificaciones:
+    build: ./ms-notificaciones
+    image: ritmoticket-ms-notificaciones
+    container_name: ms-notificaciones
+    ports:
+      - "9005:9005"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9005
+      EUREKA_INSTANCE_HOSTNAME: ms-notificaciones
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notificaciones
+    networks:
+      - ritmoticket-network
+
+  # -- ms-pagos (:9006) --
+  ms-pagos:
+    build: ./ms-pagos
+    image: ritmoticket-ms-pagos
+    container_name: ms-pagos
+    ports:
+      - "9006:9006"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9006
+      EUREKA_INSTANCE_HOSTNAME: ms-pagos
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pagos
+    networks:
+      - ritmoticket-network
+
+  # -- ms-precios (:9007) --
+  ms-precios:
+    build: ./ms-precios
+    image: ritmoticket-ms-precios
+    container_name: ms-precios
+    ports:
+      - "9007:9007"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9007
+      EUREKA_INSTANCE_HOSTNAME: ms-precios
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/precios
+    networks:
+      - ritmoticket-network
+
+  # -- ms-recintos (:9008) --
+  ms-recintos:
+    build: ./ms-recintos
+    image: ritmoticket-ms-recintos
+    container_name: ms-recintos
+    ports:
+      - "9008:9008"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9008
+      EUREKA_INSTANCE_HOSTNAME: ms-recintos
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/recintos
+    networks:
+      - ritmoticket-network
+
+  # -- ms-reportes (:9009) --
+  ms-reportes:
+    build: ./ms-reportes
+    image: ritmoticket-ms-reportes
+    container_name: ms-reportes
+    ports:
+      - "9009:9009"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9009
+      EUREKA_INSTANCE_HOSTNAME: ms-reportes
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/reportes
+    networks:
+      - ritmoticket-network
+
+  # -- ms-usuarios / auth JWT (:9010) --
+  ms-usuarios:
+    build: ./ms-usuarios
+    image: ritmoticket-ms-usuarios
+    container_name: ms-usuarios
+    ports:
+      - "9010:9010"
+    depends_on: *ms-common-depends
+    environment:
+      <<: *ms-common-env
+      SERVER_PORT: 9010
+      EUREKA_INSTANCE_HOSTNAME: ms-usuarios
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/usuarios
+    networks:
+      - ritmoticket-network
+
+# ============================================================
+# Red compartida con nombre fijo (independiente del nombre
+# de la carpeta del proyecto)
+# ============================================================
+networks:
+  ritmoticket-network:
+    name: ritmoticket-network

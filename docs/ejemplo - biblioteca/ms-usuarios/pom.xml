@@ -172,6 +172,7 @@
                 </configuration>
             </plugin>
 
+            <!-- [TEST-INI] -->
             <!-- Plugin de compilacion para procesadores de anotaciones (MapStruct + Lombok) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -194,6 +195,7 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <!-- [TEST-FIN] -->
         </plugins>
         <resources>
             <resource>

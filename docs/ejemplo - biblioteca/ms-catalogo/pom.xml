@@ -126,12 +126,22 @@
             <artifactId>mapstruct-processor</artifactId>
         </dependency>
 
+        <!-- [TEST-INI] -->
         <!-- Dependencias de testing con JUnit, MockMvc, etc. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Generador de datos aleatorios para pruebas unitarias -->
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>2.2.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- [TEST-FIN] -->
 
         <!-- Cliente Eureka: registro y descubrimiento de este microservicio -->
         <dependency>
