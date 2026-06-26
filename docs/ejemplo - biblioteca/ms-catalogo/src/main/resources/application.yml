@@ -42,7 +42,10 @@ jwt:
 # [JJWT-FIN]
 
 server:
-  port: 9002
+  # [GATEWAY-INI] 
+  # Al poner "0", el puerto se asignará dinámicamente para evitar conflictos al ejecutar múltiples instancias
+  port: 0
+  # [GATEWAY-FIN]
   error:
     include-stacktrace: never
 

@@ -1,6 +1,8 @@
 # API Gateway - Manual de Implementación y Uso
 
-## Proyecto Biblioteca de Triskeledu
+Documento de referencia del patrón API Gateway. Las **secciones 1–9** describen el enfoque original del ejemplo **Biblioteca**; la **[sección 10](#10-ritmoticket--implementación-en-este-proyecto)** documenta cómo está configurado en **RitmoTicket**.
+
+## Proyecto Biblioteca de Triskeledu (secciones 1–9)
 
 ---
 
@@ -15,6 +17,7 @@
 7. [Guía de Pruebas con Postman](#7-guía-de-pruebas-con-postman)
 8. [Endpoints de Monitoreo (Actuator)](#8-endpoints-de-monitoreo-actuator)
 9. [Troubleshooting](#9-troubleshooting)
+10. [RitmoTicket — Implementación en este proyecto](#10-ritmoticket--implementación-en-este-proyecto)
 
 ---
 
@@ -533,7 +536,202 @@ GET http://localhost:9000/actuator/gateway/routes
 
 ---
 
-## Resumen Final
+## 10. RitmoTicket — Implementación en este proyecto
+
+Esta sección describe el API Gateway **tal como está en el repositorio RitmoTicket** (`api-gateway/`). El concepto general (Eureka, `lb://`, CORS, Actuator) es el mismo que en las secciones anteriores; aquí cambian los **microservicios**, **puertos** y **paths** de la API.
+
+### 10.1 Módulo y configuración
+
+| Elemento | Valor |
+|----------|--------|
+| Carpeta | `api-gateway/` |
+| Clase principal | `cl.triskeledu.gateway.RitmoticketGatewayApplication` |
+| `spring.application.name` | `api-gateway` |
+| Puerto | **9000** |
+| Archivo de rutas | `api-gateway/src/main/resources/application.yml` |
+| Parent Maven | `cl.triskeledu:ritmoticket` |
+| Stack | Spring Cloud Gateway **WebFlux** + Eureka Client + Actuator |
+
+**Importante:** el gateway **no** depende del módulo `common` ni valida JWT. Solo reenvía la petición (incluido el header `Authorization`) al microservicio destino, que aplica su propio `SecurityConfig` y `JwtAuthenticationFilter`.
+
+### 10.2 Antes y después (cliente externo)
+
+**Sin gateway (desarrollo directo por puerto):**
+
+```
+POST http://localhost:9010/api/v1/auth/login          → ms-usuarios
+GET  http://localhost:9003/api/v1/eventos             → ms-catalogo
+GET  http://localhost:9002/api/v1/boletos/id/1        → ms-boletos
+POST http://localhost:9004/api/v1/compras             → ms-compras
+PUT  http://localhost:9006/api/v1/pagos/aprobar/id/1  → ms-pagos
+```
+
+**Con gateway (producción / prueba unificada):**
+
+```
+POST http://localhost:9000/api/v1/auth/login          → Gateway → ms-usuarios
+GET  http://localhost:9000/api/v1/eventos             → Gateway → ms-catalogo
+GET  http://localhost:9000/api/v1/boletos/id/1        → Gateway → ms-boletos
+POST http://localhost:9000/api/v1/compras             → Gateway → ms-compras
+PUT  http://localhost:9000/api/v1/pagos/aprobar/id/1  → Gateway → ms-pagos
+```
+
+El path **no se reescribe**: `/api/v1/eventos` llega igual al microservicio.
+
+### 10.3 Diagrama RitmoTicket
+
+```
+                         ┌─────────────────┐
+                         │ Eureka :8761    │
+                         └────────┬────────┘
+                                  │
+Cliente ──► API Gateway :9000 ────┼──► ms-usuarios     :9010  auth, usuarios
+                                  ├──► ms-artistas     :9001
+                                  ├──► ms-boletos      :9002  boletos, proyEventos
+                                  ├──► ms-catalogo     :9003  eventos
+                                  ├──► ms-compras      :9004  compras, carritos
+                                  ├──► ms-notificaciones :9005
+                                  ├──► ms-pagos        :9006
+                                  ├──► ms-precios      :9007
+                                  ├──► ms-recintos     :9008  recintos, escenarios, sectores
+                                  └──► ms-reportes     :9009
+```
+
+**Comunicación que NO pasa por el gateway:**
+
+- **Feign entre MS** (ej. catálogo → artistas, compras → boletos): sigue siendo HTTP directo vía Eureka entre servicios.
+- **Kafka** (eventos de dominio): bus independiente.
+- **Swagger UI** de cada MS: puerto directo (`:9003/swagger-ui.html`, etc.), porque el gateway es WebFlux y los MS usan servlet.
+
+### 10.4 Tabla de rutas (13 entradas en `application.yml`)
+
+| ID ruta | Servicio Eureka | Path(s) | Puerto dev |
+|---------|-----------------|---------|------------|
+| `ms-usuarios-auth` | ms-usuarios | `/api/v1/auth/**` | 9010 |
+| `ms-usuarios` | ms-usuarios | `/api/v1/usuarios/**` | 9010 |
+| `ms-catalogo` | ms-catalogo | `/api/v1/eventos/**` | 9003 |
+| `ms-artistas` | ms-artistas | `/api/v1/artistas/**` | 9001 |
+| `ms-recintos` | ms-recintos | `/recintos/**`, `/escenarios/**`, `/sectores/**` | 9008 |
+| `ms-boletos` | ms-boletos | `/api/v1/boletos/**` | 9002 |
+| `ms-boletos-proyeccion` | ms-boletos | `/api/v1/proyEventos/**` | 9002 |
+| `ms-compras` | ms-compras | `/api/v1/compras/**` | 9004 |
+| `ms-compras-carritos` | ms-compras | `/api/v1/carritos/**` | 9004 |
+| `ms-pagos` | ms-pagos | `/api/v1/pagos/**` | 9006 |
+| `ms-precios` | ms-precios | `/api/v1/precios/**` | 9007 |
+| `ms-notificaciones` | ms-notificaciones | `/notificaciones/**`, `/correos/**`, `/sms/**` | 9005 |
+| `ms-reportes` | ms-reportes | `/reportes/**`, `/estadisticas/**`, `/auditorias/**` | 9009 |
+
+Todos los paths de la tabla llevan el prefijo `/api/v1/` (omitido en la columna Path(s) solo por brevedad en recintos/notificaciones/reportes).
+
+#### Diferencias respecto al ejemplo Biblioteca
+
+| Biblioteca | RitmoTicket |
+|------------|-------------|
+| 5 rutas, 3 microservicios de negocio | 13 rutas, **10** microservicios de negocio |
+| Catálogo en `/api/v1/libros/**` | Catálogo en **`/api/v1/eventos/**`** |
+| `ms-recursos` + `libros-proyeccion` | **No existe**; equivalente parcial: `proyEventos` en ms-boletos |
+| ms-usuarios en puerto 9001 | ms-usuarios en puerto **9010** |
+
+#### Agrupación de paths (predicado OR)
+
+En **ms-recintos**, **ms-notificaciones** y **ms-reportes** hay varios controllers en un mismo microservicio. En lugar de repetir tres bloques `uri: lb://...` idénticos, se usa un solo predicado:
+
+```yaml
+- Path=/api/v1/recintos/**, /api/v1/escenarios/**, /api/v1/sectores/**
+```
+
+Spring Cloud Gateway interpreta las comas como **OR**: cualquiera de esos prefijos enruta al mismo destino.
+
+#### Rutas separadas en el mismo MS
+
+- **`ms-boletos`** y **`ms-boletos-proyeccion`** → ambas a `lb://ms-boletos` (inventario vs. proyección Kafka).
+- **`ms-compras`** y **`ms-compras-carritos`** → ambas a `lb://ms-compras`.
+
+Mismo criterio que `ms-recursos` + `ms-recursos-proyeccion` en biblioteca: facilita leer logs y `actuator/gateway/routes`.
+
+### 10.5 Cómo arrancar (RitmoTicket)
+
+1. Infraestructura: PostgreSQL, Kafka, Eureka (`run-dockers.bat` o equivalente).
+2. Microservicios registrados en Eureka (todos los `ms-*` que vayas a usar).
+3. Gateway:
+
+```bat
+mvn -f api-gateway spring-boot:run
+```
+
+4. Verificar: `http://localhost:8761` (instancias `API-GATEWAY`, `MS-CATALOGO`, etc.).
+5. Rutas activas: `GET http://localhost:9000/actuator/gateway/routes`
+
+### 10.6 Prueba E2E vía gateway (flujo venta resumido)
+
+Importar en Postman: [`RitmoTicket-API.postman_collection_API_Gateway.json`](./RitmoTicket-API.postman_collection_API_Gateway.json)  
+Variable de colección: `gateway_url` = `http://localhost:9000`
+
+```http
+# 1. Login (público en ms-usuarios)
+POST http://localhost:9000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "correo": "ana@administrador.cl",
+  "password": "Ritmo@2026"
+}
+
+# 2. Listar eventos (JWT)
+GET http://localhost:9000/api/v1/eventos
+Authorization: Bearer <token>
+
+# 3. Consultar boleto
+GET http://localhost:9000/api/v1/boletos/id/1
+Authorization: Bearer <token>
+
+# 4. Crear compra
+POST http://localhost:9000/api/v1/compras
+Authorization: Bearer <token>
+Content-Type: application/json
+
+# 5. Aprobar pago
+PUT http://localhost:9000/api/v1/pagos/aprobar/id/1
+Authorization: Bearer <token>
+```
+
+Para que el paso 2 devuelva `artista` y `recinto` enriquecidos, **ms-artistas** y **ms-recintos** deben estar levantados (Feign interno; no pasa por el gateway, pero el cliente sí usa `:9000` para eventos).
+
+### 10.7 CORS y filtros globales
+
+Definidos en `application.yml` del gateway:
+
+- **CORS** para orígenes de frontend (`localhost:3000`, `4200`, `5173`).
+- **`DedupeResponseHeader`** para evitar headers CORS duplicados entre gateway y MS.
+
+Los microservicios pueden mantener su propia configuración CORS para acceso directo en desarrollo; el frontend en producción debería apuntar solo al puerto **9000**.
+
+### 10.8 Monitoreo
+
+| Endpoint | Uso |
+|----------|-----|
+| `GET /actuator/health` | Estado del gateway |
+| `GET /actuator/gateway/routes` | Lista de las 13 rutas y predicados |
+| `GET /actuator/info` | Metadatos de la app |
+
+### 10.9 Troubleshooting RitmoTicket
+
+| Síntoma | Causa habitual | Qué revisar |
+|---------|----------------|-------------|
+| 404 en gateway | Ruta no definida o path incorrecto | `/api/v1/eventos` (no `/libros`); `actuator/gateway/routes` |
+| 503 Service Unavailable | MS no registrado en Eureka | Dashboard `:8761`, que el MS destino esté arriba |
+| 401 en ruta protegida | Sin token o token inválido | Login vía `:9000/auth/login`, header `Authorization` |
+| Eventos con `artista`/`recinto` null | Feign interno falló | ms-artistas/ms-recintos arriba; JWT propagado (ver `JwtAuthenticationFilter`) |
+| 500 en gateway (login, GET, etc.) | Eureka registra hostname Windows (`*.mshome.net`) ilegible para el gateway | `prefer-ip-address: true` + `hostname: localhost` en cada MS; reiniciar MS y gateway |
+
+### 10.10 Documentos relacionados
+
+- [FLUJO-NEGOCIO-RITMOTICKET.md](./FLUJO-NEGOCIO-RITMOTICKET.md) — flujo de compra y roles
+- [MEJORAS-OPCIONALES.md](./MEJORAS-OPCIONALES.md) — extensiones futuras (Swagger vía gateway, más filtros, etc.)
+
+---
+
+## Resumen Final (Biblioteca — referencia histórica)
 
 | Componente | Puerto | Función |
 |-----------|--------|---------|

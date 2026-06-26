@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import cl.triskeledu.catalogo.dto.LibroRequest;
 import cl.triskeledu.catalogo.dto.LibroResponse;
 import cl.triskeledu.catalogo.service.LibroService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -41,7 +40,7 @@ import lombok.RequiredArgsConstructor;
 public class LibroController {
 
     private final LibroService libroService;
-
+    
     // ─── Métodos auxiliares HATEOAS ───────────────────────────────────────────
 
     /**
@@ -57,6 +56,7 @@ public class LibroController {
      * cambia el @RequestMapping.
      */
     private LibroResponse addLinks(LibroResponse libro) {
+
         Long id = libro.getId();
 
         libro.add(linkTo(methodOn(LibroController.class).findById(id)).withSelfRel());

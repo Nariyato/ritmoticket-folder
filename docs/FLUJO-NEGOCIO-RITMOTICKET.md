@@ -447,7 +447,7 @@ Hoy Postman llama **directo** a cada puerto (`9004`, `9006`, etc.). En producci�
 Cliente → API Gateway (JWT) → Eureka → Microservicio
 ```
 
-**No implementado aún:** Gateway, Swagger unificado en todos los MS.
+**No implementado aún:** Swagger unificado en todos los MS. **API Gateway** en puerto **9000** — ver [05-Api-Gateway.md](./05-Api-Gateway.md) sección 10.
 
 ---
 
@@ -466,7 +466,7 @@ Cliente → API Gateway (JWT) → Eureka → Microservicio
 | Reporte automático de venta | ❌ |
 | Validar usuario en compra (Feign) | ❌ |
 | Login / JWT (todos los MS) | ✅ |
-| API Gateway | ❌ |
+| API Gateway (`:9000`, 13 rutas) | ✅ |
 | Swagger en ms-catalogo (`EventoController`) | ✅ |
 | HATEOAS en eventos, boletos y usuarios | ✅ |
 | Datos semilla alineados entre MS | ✅ |
@@ -496,7 +496,7 @@ Cliente → API Gateway (JWT) → Eureka → Microservicio
 
 - [KAFKA-IMPLEMENTACION.md](./KAFKA-IMPLEMENTACION.md) — Detalle técnico de eventos Kafka
 - [MEJORAS-OPCIONALES.md](./MEJORAS-OPCIONALES.md) — Roadmap de mejoras futuras (HATEOAS, flujos automáticos, Gateway, etc.)
-- Pruebas Postman — flujos descritos en conversación de desarrollo
+- [05-Api-Gateway.md](./05-Api-Gateway.md) — Patrón gateway + §10 RitmoTicket + colección Postman
 
 ---
 

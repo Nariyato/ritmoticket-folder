@@ -53,7 +53,7 @@
         Eureka Client:
         Permite que el API Gateway se registre en Eureka Server como un servicio más,
         y además le permite descubrir las instancias de los microservicios destino
-        (ms-usuarios, ms-catalogo, ms-recursos) para enrutar las peticiones.
+        (ms-usuarios, ms-catalogo, etc.) para enrutar las peticiones.
         Incluye transitivamente spring-cloud-starter-loadbalancer para balanceo de carga.
         -->
         <dependency>

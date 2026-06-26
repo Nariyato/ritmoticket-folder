@@ -1,0 +1,1575 @@
+{
+  "info": {
+    "_postman_id": "a7f3c2e1-9b4d-4f8a-b1e2-ritmoticket2026",
+    "name": "RitmoTicket API (Gateway)",
+    "description": "Colección completa para RitmoTicket vía **API Gateway** (`http://localhost:9000`).\n\n**Flujo recomendado:**\n1. Login (guarda `jwt_token`)\n2. CRUD por dominio (Eventos, Artistas, Recintos, Boletos, Usuarios…)\n3. Flujo de compra con **Login Cliente** → carrito → compra → aprobar pago\n4. Logout (opcional)\n\n**Requisitos:** Eureka `:8761`, Gateway `:9000` y MS destino levantados.\n\n**Usuarios seed (`Ritmo@2026`):**\n- Administrador: `ana@administrador.cl`\n- Organizador: `beatriz@organizador.cl`\n- Cliente: `carlos@cliente.cl` (id 7, carrito vacío id 4)\n\n**Roles:** POST/PUT/DELETE de eventos, artistas, recintos y boletos requieren **Organizador** o **Administrador**. Compras y carrito usan **Cliente**.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Autenticación",
+      "description": "Login, registro y logout. El token se guarda en `jwt_token`.",
+      "item": [
+        {
+          "name": "Login - Administrador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Tiene token JWT', () => pm.expect(json.token).to.be.a('string').and.not.empty);",
+                  "pm.test('Rol Administrador', () => pm.expect(json.rol).to.eql('Administrador'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('jwt_token', json.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"ana@administrador.cl\",\n  \"password\": \"Ritmo@2026\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/auth/login"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Organizador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('jwt_token', pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"beatriz@organizador.cl\",\n  \"password\": \"Ritmo@2026\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/auth/login",
+            "description": "Usar antes de crear/actualizar eventos, artistas, recintos o boletos."
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Cliente (Carlos)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Rol Cliente', () => pm.expect(json.rol).to.eql('Cliente'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('jwt_token', json.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"carlos@cliente.cl\",\n  \"password\": \"Ritmo@2026\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/auth/login",
+            "description": "Usar antes del flujo de carrito y compra."
+          },
+          "response": []
+        },
+        {
+          "name": "Register - Nuevo cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('Rol Cliente', () => pm.expect(json.rol).to.eql('Cliente'));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set('usuario_id', json.idUsuario);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Test\",\n  \"apellido\": \"Postman\",\n  \"correo\": \"test.postman@cliente.cl\",\n  \"password\": \"Ritmo@2026\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/auth/register"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Credenciales inválidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('No es 200', () => pm.expect(pm.response.code).to.not.eql(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"noexiste@test.cl\",\n  \"password\": \"wrong\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/auth/login"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Mensaje confirmación', () => pm.expect(pm.response.json().message).to.include('Sesión cerrada'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/auth/logout"
+          },
+          "response": []
+        },
+        {
+          "name": "Verificar token invalidado (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Token invalidado', () => pm.expect([401, 403]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/eventos",
+            "description": "Ejecutar después del Logout."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Eventos (CRUD)",
+      "description": "GET: todos los roles. POST/PUT/DELETE: Organizador o Administrador.",
+      "item": [
+        {
+          "name": "Listar todos los eventos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "const eventos = body._embedded?.eventoResponseDTOList || body.content || (Array.isArray(body) ? body : []);",
+                  "if (eventos.length > 0) pm.collectionVariables.set('evento_id', eventos[0].idEvento);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/eventos"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener evento por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/eventos/id/{{evento_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Existe evento por artista",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/eventos/existe/artista/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Existe evento por recinto",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/eventos/existe/recinto/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Existe evento por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/eventos/existe/idEvento/{{evento_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear evento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set('evento_id', pm.response.json().idEvento);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreEvento\": \"Postman Test Festival\",\n  \"categoria\": \"Rock\",\n  \"fecha\": \"2026-09-15\",\n  \"estado\": \"Programado\",\n  \"idArtista\": 1,\n  \"idRecinto\": 2\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/eventos",
+            "description": "Requiere Login Organizador o Administrador."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar evento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreEvento\": \"Postman Test Festival - Editado\",\n  \"categoria\": \"Rock\",\n  \"fecha\": \"2026-09-20\",\n  \"estado\": \"Confirmado\",\n  \"idArtista\": 1,\n  \"idRecinto\": 2\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/eventos/id/{{evento_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar evento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/eventos/id/{{evento_id}}",
+            "description": "Usar sobre el evento creado en POST. No eliminar eventos del seed si tienen boletos asociados."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Artistas (CRUD)",
+      "item": [
+        {
+          "name": "Listar artistas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 && pm.response.json().length > 0) {",
+                  "    pm.collectionVariables.set('artista_id', pm.response.json()[0].idArtista);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/artistas"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener artista por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/artistas/id/{{artista_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar artista por nombre",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/artistas/nombre/Los Bunkers"
+          },
+          "response": []
+        },
+        {
+          "name": "Existe artista por nombre",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/artistas/existe/nombre/Los Bunkers"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear artista",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set('artista_id', pm.response.json().idArtista);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreArtistico\": \"Artista Postman\",\n  \"pais\": \"Chile\",\n  \"genero\": \"Indie\",\n  \"estado\": \"Activo\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/artistas"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar artista",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreArtistico\": \"Artista Postman Editado\",\n  \"pais\": \"Chile\",\n  \"genero\": \"Pop\",\n  \"estado\": \"En Gira\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/artistas/id/{{artista_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Asociar álbum a artista",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/artistas/artistaId/1/albumId/1",
+            "description": "IDs de ejemplo del seed (Los Bunkers + Vida de Perros)."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar artista",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/artistas/id/{{artista_id}}",
+            "description": "Solo sobre el artista creado en POST (no eliminar seed)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Recintos (CRUD)",
+      "item": [
+        {
+          "name": "Listar recintos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 && pm.response.json().length > 0) {",
+                  "    pm.collectionVariables.set('recinto_id', pm.response.json()[0].idRecinto);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/recintos"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener recinto por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/recintos/id/{{recinto_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar recinto por nombre",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/recintos/nombre/Estadio Nacional"
+          },
+          "response": []
+        },
+        {
+          "name": "Existe recinto por nombre",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/recintos/existe/nombre/Estadio Nacional"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear recinto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set('recinto_id', pm.response.json().idRecinto);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Recinto Postman\",\n  \"ciudad\": \"Valparaíso\",\n  \"capacidad\": 5000,\n  \"estado\": \"Operativo\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/recintos"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar recinto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Recinto Postman Editado\",\n  \"ciudad\": \"Valparaíso\",\n  \"capacidad\": 6000,\n  \"estado\": \"Operativo\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/recintos/id/{{recinto_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar recinto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/recintos/id/{{recinto_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Escenarios (CRUD)",
+      "item": [
+        {
+          "name": "Listar escenarios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 && pm.response.json().length > 0) {",
+                  "    pm.collectionVariables.set('escenario_id', pm.response.json()[0].idEscenario);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/escenarios"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener escenario por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/escenarios/id/{{escenario_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar escenarios por recinto",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/escenarios/idRecinto/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear escenario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set('escenario_id', pm.response.json().idEscenario);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idRecinto\": 1,\n  \"nombre\": \"Escenario Postman\",\n  \"capacidad\": 10000,\n  \"tipo\": \"Techado\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/escenarios"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar escenario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idRecinto\": 1,\n  \"nombre\": \"Escenario Postman Editado\",\n  \"capacidad\": 12000,\n  \"tipo\": \"Abierto\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/escenarios/id/{{escenario_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar escenario",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/escenarios/id/{{escenario_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sectores (CRUD)",
+      "item": [
+        {
+          "name": "Listar sectores",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 && pm.response.json().length > 0) {",
+                  "    pm.collectionVariables.set('sector_id', pm.response.json()[0].idSector);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/sectores"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener sector por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/sectores/id/{{sector_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar sectores por escenario",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/sectores/idEscenario/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear sector",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set('sector_id', pm.response.json().idSector);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEscenario\": 1,\n  \"nombre\": \"Sector Postman\",\n  \"capacidad\": 2000,\n  \"estado\": \"Disponible\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/sectores"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar sector",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEscenario\": 1,\n  \"nombre\": \"Sector Postman Editado\",\n  \"capacidad\": 2500,\n  \"estado\": \"Disponible\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/sectores/id/{{sector_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar sector",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/sectores/id/{{sector_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Boletos (CRUD)",
+      "item": [
+        {
+          "name": "Listar boletos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const boletos = body._embedded?.boletoResponseList || (Array.isArray(body) ? body : []);",
+                  "if (boletos.length > 0) pm.collectionVariables.set('boleto_id', boletos[0].idBoleto);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/boletos"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener boleto por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/boletos/id/{{boleto_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar precio del boleto",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/boletos/precio/id/{{boleto_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar proyección eventos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/proyEventos"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear boleto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set('boleto_id', pm.response.json().idBoleto);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEvento\": 1,\n  \"idZona\": 2,\n  \"codigo\": \"TKT-PM-001\",\n  \"tipo\": \"Digital\",\n  \"estado\": \"Disponible\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/boletos",
+            "description": "Cambia `codigo` si ya existe. Usar antes del flujo de compra si los del seed están Vendido."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar boleto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEvento\": 1,\n  \"idZona\": 2,\n  \"codigo\": \"TKT-PM-001\",\n  \"tipo\": \"Digital\",\n  \"estado\": \"Reservado\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/boletos/id/{{boleto_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar boleto",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/boletos/id/{{boleto_id}}",
+            "description": "Solo sobre boleto creado en POST."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Usuarios (CRUD)",
+      "description": "POST/PUT/DELETE de usuarios: solo Administrador. Perfil: Cliente puede el suyo.",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/usuarios",
+            "description": "Organizador o Administrador."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/usuarios/id/7"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener usuario por correo",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/usuarios/correo/carlos@cliente.cl"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear usuario (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set('usuario_id', pm.response.json().idUsuario);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo\",\n  \"apellido\": \"Organizador\",\n  \"correo\": \"nuevo.organizador@ritmo.cl\",\n  \"password\": \"Ritmo@2026\",\n  \"rol\": \"Organizador\",\n  \"activo\": true\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/usuarios",
+            "description": "Requiere Login Administrador."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo\",\n  \"apellido\": \"Organizador Editado\",\n  \"correo\": \"nuevo.organizador@ritmo.cl\",\n  \"password\": \"Ritmo@2026\",\n  \"rol\": \"Organizador\",\n  \"activo\": true\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/usuarios/id/{{usuario_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/usuarios/id/{{usuario_id}}/desactivar"
+          },
+          "response": []
+        },
+        {
+          "name": "Activar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/usuarios/id/{{usuario_id}}/activar"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear perfil de usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"+56912345678\",\n  \"direccion\": \"Av. Providencia 100, Santiago\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/usuarios/perfiles/idUsuario/7"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/usuarios/id/{{usuario_id}}",
+            "description": "Solo sobre usuario creado en POST."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Flujo de compra",
+      "description": "1) Login Cliente  2) Crear boleto Disponible (Organizador)  3) Carrito/compra/pago",
+      "item": [
+        {
+          "name": "Obtener carrito Carlos (id 4)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/carritos/id/{{carrito_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Agregar boleto al carrito",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idBoleto\": {{boleto_id}},\n  \"cantidad\": 1\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/carritos/boletos/id/{{carrito_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Vaciar carrito",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/carritos/vaciar/id/{{carrito_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear compra (Cliente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('compra_id', json.idCompra);",
+                  "    pm.test('Compra PENDIENTE', () => pm.expect(json.estado).to.eql('PENDIENTE'));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": 7,\n  \"metodoPago\": \"WEBPAY\",\n  \"detalles\": [\n    { \"idBoleto\": {{boleto_id}}, \"cantidad\": 1 }\n  ]\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/compras"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar compras (Admin/Organizador)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/compras"
+          },
+          "response": []
+        },
+        {
+          "name": "Confirmar compra",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/compras/confirmar/id/{{compra_id}}",
+            "description": "Alternativa manual a aprobar pago vía ms-pagos."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar pagos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const pendiente = pm.response.json().find(p => p.estado === 'PENDIENTE');",
+                  "    if (pendiente) pm.collectionVariables.set('pago_id', pendiente.idPago);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/pagos"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener pago por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/pagos/id/{{pago_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear pago",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) pm.collectionVariables.set('pago_id', pm.response.json().idPago);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idCompra\": {{compra_id}},\n  \"monto\": 45000,\n  \"metodo\": \"WEBPAY\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/pagos"
+          },
+          "response": []
+        },
+        {
+          "name": "Aprobar pago",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Pago APROBADO', () => pm.expect(pm.response.json().estado).to.eql('APROBADO'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/pagos/aprobar/id/{{pago_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar pago",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/pagos/id/{{pago_id}}",
+            "description": "Solo pagos de prueba; no eliminar seed en producción."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Precios",
+      "item": [
+        {
+          "name": "Listar precios",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/precios"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener precio por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/precios/id/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear precio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) pm.collectionVariables.set('precio_id', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoBoleto\": \"VIP Experience\",\n  \"valor\": 175000,\n  \"moneda\": \"CLP\",\n  \"estado\": \"Activo\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/precios"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar precio",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/precios/id/{{precio_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notificaciones y correos",
+      "item": [
+        {
+          "name": "Listar notificaciones",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/notificaciones"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener notificación por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/notificaciones/id/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear notificación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) pm.collectionVariables.set('notificacion_id', pm.response.json().idNotificacion);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mensaje\": \"Tu compra fue registrada correctamente\",\n  \"tipo\": \"Confirmacion\",\n  \"estado\": \"Pendiente\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/notificaciones"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar notificación",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/notificaciones/id/{{notificacion_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar correos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/correos"
+          },
+          "response": []
+        },
+        {
+          "name": "Enviar correo",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destinatario\": \"carlos@cliente.cl\",\n  \"asunto\": \"Confirmación de compra\",\n  \"cuerpo\": \"Gracias por tu compra en RitmoTicket.\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/correos"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar SMS",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/sms"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear SMS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) pm.collectionVariables.set('sms_id', pm.response.json().idSms);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"+56987654321\",\n  \"mensaje\": \"Recordatorio: tu evento es mañana\",\n  \"estado\": \"Pendiente\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/sms"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar SMS",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/sms/id/{{sms_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reportes y auditoría",
+      "item": [
+        {
+          "name": "Listar reportes",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/reportes"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reporte",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) pm.collectionVariables.set('reporte_id', pm.response.json().idReporte);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ventas mensuales Postman\",\n  \"tipo\": \"Ventas\",\n  \"estado\": \"Generado\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/reportes"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar estadísticas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/estadisticas"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear estadística",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descripcion\": \"Tickets vendidos hoy\",\n  \"valor\": 42,\n  \"fecha\": \"2026-06-22\",\n  \"categoria\": \"Ventas\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/estadisticas"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar auditorías",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/auditorias"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear auditoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accion\": \"LOGIN_EXITOSO\",\n  \"usuario\": \"ana@administrador.cl\",\n  \"fecha\": \"2026-06-22\",\n  \"estado\": \"OK\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/auditorias"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Seguridad",
+      "item": [
+        {
+          "name": "Eventos sin token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('No autorizado sin JWT', () => pm.expect([401, 403]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{gateway_url}}/api/v1/eventos"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear evento como Cliente (403)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Ejecutar antes: Login - Cliente (Carlos)"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cliente no puede crear eventos', () => pm.expect(pm.response.code).to.eql(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreEvento\": \"Intento Cliente\",\n  \"categoria\": \"Rock\",\n  \"fecha\": \"2026-12-01\",\n  \"estado\": \"Programado\"\n}"
+            },
+            "url": "{{gateway_url}}/api/v1/eventos"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar usuarios como Cliente (403)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Ejecutar antes: Login - Cliente (Carlos)"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cliente no puede listar usuarios', () => pm.expect(pm.response.code).to.eql(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": "{{gateway_url}}/api/v1/usuarios"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "gateway_url", "value": "http://localhost:9000" },
+    { "key": "jwt_token", "value": "" },
+    { "key": "evento_id", "value": "1" },
+    { "key": "artista_id", "value": "1" },
+    { "key": "recinto_id", "value": "1" },
+    { "key": "escenario_id", "value": "1" },
+    { "key": "sector_id", "value": "1" },
+    { "key": "boleto_id", "value": "1" },
+    { "key": "usuario_id", "value": "7" },
+    { "key": "carrito_id", "value": "4" },
+    { "key": "compra_id", "value": "3" },
+    { "key": "pago_id", "value": "3" },
+    { "key": "precio_id", "value": "1" },
+    { "key": "notificacion_id", "value": "1" },
+    { "key": "sms_id", "value": "1" },
+    { "key": "reporte_id", "value": "1" }
+  ]
+}

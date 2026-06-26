@@ -2,7 +2,7 @@
 # API GATEWAY - Configuración principal (Global)
 # ============================================================
 # Este archivo configura el API Gateway como punto de entrada único
-# para todos los microservicios del proyecto Biblioteca.
+# para todos los microservicios del proyecto Ritmoticket.
 # Puerto: 9000
 # Todas las peticiones llegan aquí y son enrutadas al microservicio
 # correspondiente según el path de la URL.
@@ -27,73 +27,156 @@ spring:
   # El prefijo "lb://" activa Spring Cloud LoadBalancer, que usa Eureka
   # para descubrir todas las instancias registradas de un servicio y
   # distribuye las peticiones entre ellas usando round-robin.
-  # Ejemplo: si ms-catalogo tiene 2 instancias (puertos 9002 y 9012),
+  # Ejemplo: si ms-catalogo tiene 2 instancias (puertos 9003 y 9013),
   # el gateway alternará las peticiones entre ambas automáticamente.
   #
   # TRANSPARENCIA:
   # Los paths NO se modifican al enrutar. Una petición a
-  # localhost:9000/api/v1/libros llega al microservicio como /api/v1/libros.
+  # localhost:9000/api/v1/eventos llega al microservicio como /api/v1/eventos.
   # ============================================================
   cloud:
     gateway:
       routes:
 
         # ----------------------------------------------------------
-        # RUTA 1: Autenticación (ms-usuarios)
+        # RUTA 1: Autenticación (ms-usuarios — puerto 9010)
         # ----------------------------------------------------------
-        # Endpoints públicos de login, registro y logout.
+        # Login, registro y logout. Públicos (sin JWT en el MS destino).
+        # Flujo típico: el cliente obtiene el token aquí y lo usa en el resto.
         # Ejemplo: POST http://localhost:9000/api/v1/auth/login
-        # Se enruta a: ms-usuarios (puerto 9001 por defecto)
         - id: ms-usuarios-auth
           uri: lb://ms-usuarios
           predicates:
             - Path=/api/v1/auth/**
 
         # ----------------------------------------------------------
-        # RUTA 2: Gestión de usuarios (ms-usuarios)
+        # RUTA 2: Gestión de usuarios y perfiles (ms-usuarios)
         # ----------------------------------------------------------
-        # CRUD de usuarios. Requiere autenticación JWT.
-        # Ejemplo: GET http://localhost:9000/api/v1/usuarios
-        # Se enruta a: ms-usuarios (puerto 9001 por defecto)
+        # CRUD de usuarios, activar/desactivar, perfiles.
+        # Roles: GET Organizador/Admin; POST/PUT/DELETE solo Administrador.
+        # Ejemplo: GET http://localhost:9000/api/v1/usuarios/id/7
         - id: ms-usuarios
           uri: lb://ms-usuarios
           predicates:
             - Path=/api/v1/usuarios/**
 
         # ----------------------------------------------------------
-        # RUTA 3: Catálogo de libros (ms-catalogo)
+        # RUTA 3: Catálogo de eventos (ms-catalogo — puerto 9003)
         # ----------------------------------------------------------
-        # CRUD de libros del catálogo. Requiere autenticación JWT.
-        # Ejemplo: GET http://localhost:9000/api/v1/libros
-        # Se enruta a: ms-catalogo (puerto 9002 por defecto)
+        # Fuente de verdad de conciertos. Enriquece artista/recinto vía Feign.
+        # Ejemplo: GET http://localhost:9000/api/v1/eventos
         - id: ms-catalogo
           uri: lb://ms-catalogo
           predicates:
-            - Path=/api/v1/libros/**
+            - Path=/api/v1/eventos/**
 
         # ----------------------------------------------------------
-        # RUTA 4: Recursos físicos (ms-recursos)
+        # RUTA 4: Artistas (ms-artistas — puerto 9001)
         # ----------------------------------------------------------
-        # CRUD de recursos físicos (copias de libros, DVDs, etc.)
-        # Requiere autenticación JWT.
-        # Ejemplo: GET http://localhost:9000/api/v1/recursos
-        # Se enruta a: ms-recursos (puerto 9003 por defecto)
-        - id: ms-recursos
-          uri: lb://ms-recursos
+        # Maestros de artistas y álbumes. Consultado por catálogo (Feign).
+        # Ejemplo: GET http://localhost:9000/api/v1/artistas/id/1
+        - id: ms-artistas
+          uri: lb://ms-artistas
           predicates:
-            - Path=/api/v1/recursos/**
+            - Path=/api/v1/artistas/**
 
         # ----------------------------------------------------------
-        # RUTA 5: Proyecciones de libros (ms-recursos)
+        # RUTA 5: Recintos, escenarios y sectores (ms-recintos — puerto 9008)
         # ----------------------------------------------------------
-        # Vista de proyección de libros desde el servicio de recursos.
-        # Requiere autenticación JWT.
-        # Ejemplo: GET http://localhost:9000/api/v1/libros-proyeccion
-        # Se enruta a: ms-recursos (puerto 9003 por defecto)
-        - id: ms-recursos-proyeccion
-          uri: lb://ms-recursos
+        # Tres controllers en un mismo MS; un predicado con varios paths (OR).
+        # Ejemplo: GET http://localhost:9000/api/v1/recintos/id/1
+        - id: ms-recintos
+          uri: lb://ms-recintos
           predicates:
-            - Path=/api/v1/libros-proyeccion/**
+            - Path=/api/v1/recintos/**, /api/v1/escenarios/**, /api/v1/sectores/**
+
+        # ----------------------------------------------------------
+        # RUTA 6: Inventario de boletos (ms-boletos — puerto 9002)
+        # ----------------------------------------------------------
+        # Tickets, zonas, precio por boleto (Feign desde ms-compras).
+        # Ejemplo: GET http://localhost:9000/api/v1/boletos/id/1
+        - id: ms-boletos
+          uri: lb://ms-boletos
+          predicates:
+            - Path=/api/v1/boletos/**
+
+        # ----------------------------------------------------------
+        # RUTA 7: Proyección local de eventos en boletos (ms-boletos)
+        # ----------------------------------------------------------
+        # Tabla proy_eventos (sincronizada por Kafka desde catálogo).
+        # Ruta separada para claridad, igual que libros-proyeccion en biblioteca.
+        # Ejemplo: GET http://localhost:9000/api/v1/proyEventos
+        - id: ms-boletos-proyeccion
+          uri: lb://ms-boletos
+          predicates:
+            - Path=/api/v1/proyEventos/**
+
+        # ----------------------------------------------------------
+        # RUTA 8: Compras (ms-compras — puerto 9004)
+        # ----------------------------------------------------------
+        # Órdenes de compra y confirmación tras pago (Feign con pagos).
+        # Ejemplo: POST http://localhost:9000/api/v1/compras
+        - id: ms-compras
+          uri: lb://ms-compras
+          predicates:
+            - Path=/api/v1/compras/**
+
+        # ----------------------------------------------------------
+        # RUTA 9: Carritos (ms-compras)
+        # ----------------------------------------------------------
+        # Mismo MS que compras; path distinto para el flujo previo a la orden.
+        # Ejemplo: POST http://localhost:9000/api/v1/carritos/boletos/id/1
+        - id: ms-compras-carritos
+          uri: lb://ms-compras
+          predicates:
+            - Path=/api/v1/carritos/**
+
+        # ----------------------------------------------------------
+        # RUTA 10: Pagos (ms-pagos — puerto 9006)
+        # ----------------------------------------------------------
+        # Cobros, aprobación y reembolsos. Publica eventos Kafka a compras/reportes.
+        # Ejemplo: PUT http://localhost:9000/api/v1/pagos/aprobar/id/1
+        - id: ms-pagos
+          uri: lb://ms-pagos
+          predicates:
+            - Path=/api/v1/pagos/**
+
+        # ----------------------------------------------------------
+        # RUTA 11: Precios (ms-precios — puerto 9007)
+        # ----------------------------------------------------------
+        # Tabla de precios por tipo de boleto (dominio propio, no confundir con
+        # GET /boletos/precio/id/{id} que lee la zona en ms-boletos).
+        # Ejemplo: GET http://localhost:9000/api/v1/precios
+        - id: ms-precios
+          uri: lb://ms-precios
+          predicates:
+            - Path=/api/v1/precios/**
+
+        # ----------------------------------------------------------
+        # RUTA 12: Notificaciones, correos y SMS (ms-notificaciones — puerto 9005)
+        # ----------------------------------------------------------
+        # Tres APIs en un MS; rutas OR en un solo predicado.
+        # Ejemplo: GET http://localhost:9000/api/v1/notificaciones
+        - id: ms-notificaciones
+          uri: lb://ms-notificaciones
+          predicates:
+            - Path=/api/v1/notificaciones/**, /api/v1/correos/**, /api/v1/sms/**
+
+        # ----------------------------------------------------------
+        # RUTA 13: Reportes, estadísticas y auditoría (ms-reportes — puerto 9009)
+        # ----------------------------------------------------------
+        # Consolida proyecciones Kafka (compras/pagos) para métricas.
+        # Ejemplo: GET http://localhost:9000/api/v1/reportes
+        - id: ms-reportes
+          uri: lb://ms-reportes
+          predicates:
+            - Path=/api/v1/reportes/**, /api/v1/estadisticas/**, /api/v1/auditorias/**
+
+        # ----------------------------------------------------------
+        # NOTA: Swagger UI (/swagger-ui.html) y OpenAPI (/v3/api-docs)
+        # NO se enrutan por el gateway (WebFlux vs servlet). Sigue usando el
+        # puerto directo de cada MS, p. ej. :9003/swagger-ui.html para eventos.
+        # ----------------------------------------------------------
 
       # ============================================================
       # Configuración global de filtros por defecto
@@ -152,6 +235,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka  # URL del servidor Eureka
   instance:
     prefer-ip-address: true        # Usa IP en lugar de hostname para comunicación
+    hostname: localhost            # Evita hostnames Windows (*.mshome.net) ilegibles para lb://
     instance-id: "${spring.application.name}:${random.value}"  # ID único por instancia
     lease-renewal-interval-in-seconds: 15   # Cada 15s envía heartbeat a Eureka
     lease-expiration-duration-in-seconds: 60 # Eureka elimina la instancia si no recibe heartbeat en 60s
@@ -187,7 +271,7 @@ info:
   app:
     name: ${spring.application.name}
     version: "0.0.1-SNAPSHOT"
-    description: "API Gateway - Punto de entrada único para los microservicios de Biblioteca"
+    description: "API Gateway - Punto de entrada único para los microservicios de Ritmoticket"
 
 # ============================================================
 # Configuración de logging

@@ -99,6 +99,11 @@ start "MS-RECINTOS" mvn -f ms-recintos spring-boot:run
 start "MS-REPORTES" mvn -f ms-reportes spring-boot:run
 
 start "MS-USUARIOS" mvn -f ms-usuarios spring-boot:run
+rem  Se inicia el API Gateway despues de los microservicios para que encuentre servicios en Eureka
+timeout /t 5 /nobreak > nul
+echo ===== Iniciando API Gateway =====
+start "API-GATEWAY" mvn -f api-gateway spring-boot:run
+
 echo Todos los servicios han sido lanzados.
 pause
 goto MENU
@@ -129,6 +134,11 @@ start "MS-RECINTOS" java -jar ms-recintos\\target\\cl-triskeledu-recintos-0.0.1-
 start "MS-REPORTES" java -jar ms-reportes\\target\\cl-triskeledu-reportes-0.0.1-SNAPSHOT.jar --spring.profiles.active=test
 
 start "MS-USUARIOS" java -jar ms-usuarios\\target\\cl-triskeledu-usuarios-0.0.1-SNAPSHOT.jar --spring.profiles.active=test
+rem  Se inicia el API Gateway en modo test
+timeout /t 5 /nobreak > nul
+echo ===== Iniciando API Gateway (test) =====
+start "API-GATEWAY" java -jar api-gateway\\target\\cl-triskeledu-gateway-0.0.1-SNAPSHOT.jar --spring.profiles.active=test
+
 echo Todos los servicios han sido lanzados en modo test.
 pause
 goto MENU
@@ -176,6 +186,7 @@ call mvn clean install -U
 cd /d C:\ritmoticket-folder\ms-usuarios
 
 call mvn clean install -U
+
 echo Compilacion completada.
 pause
 goto MENU
@@ -192,9 +203,9 @@ rmdir /s /q C:\ritmoticket-folder\eureka\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-artistas\target
 
+rmdir /s /q C:\ritmoticket-folder\ms-boletos\target
 
-
-
+rmdir /s /q C:\ritmoticket-folder\ms-catalogo\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-compras\target
 
@@ -202,13 +213,14 @@ rmdir /s /q C:\ritmoticket-folder\ms-notificaciones\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-pagos\target
 
-
+rmdir /s /q C:\ritmoticket-folder\ms-precios\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-recintos\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-reportes\target
 
 rmdir /s /q C:\ritmoticket-folder\ms-usuarios\target
+
 echo Descargando dependencias nuevamente con Maven ...
 mvn clean install -U -DskipTests
 echo.
@@ -403,10 +415,20 @@ pause
 
 goto MENU
 
+rem Seccion para iniciar el API Gateway de forma individual
+:RUN_GATEWAY
+cls
+echo.
+echo ===== Iniciando API Gateway =====
+start "API-GATEWAY" mvn -f api-gateway spring-boot:run
+echo API Gateway iniciado en puerto 9000.
+pause
+goto MENU
+
 :SALIR
 cls
 echo.
-echo   Hasta luego.
+echo   Hasta luego :D.
 echo.
 endlocal
 exit /b

@@ -1,6 +1,6 @@
 {
   // ============================================================
-  // Tareas de VS Code para el proyecto Biblioteca
+  // Tareas de VS Code para el proyecto Ritmoticket.
   // ============================================================
   // Tarea única: esperar a que Eureka Server esté listo.
   // Los microservicios y el gateway la usan como preLaunchTask

@@ -35,7 +35,7 @@ Documento de referencia para ampliar el proyecto cuando quieras dejarlo más com
 
 ## Seguridad y acceso
 
-- [ ] **API Gateway** — punto único de entrada (`docs/05-Api-Gateway.md` es guía biblioteca; adaptar rutas RitmoTicket: `/eventos`, `/boletos`, etc.).
+- [ ] **API Gateway** — rutas en [05-Api-Gateway.md](./05-Api-Gateway.md) §10; colección Postman: [RitmoTicket-API.postman_collection_API_Gateway.json](./RitmoTicket-API.postman_collection_API_Gateway.json)
 - [ ] **Swagger en todos los MS** — hoy documentado con detalle en catálogo; replicar anotaciones en boletos/usuarios/compras.
 - [ ] **Validar usuario en compra** — `CompraService` con Feign a `ms-usuarios` antes de guardar.
 - [ ] **Links HATEOAS según rol** — ocultar `delete`/`update` en `_links` si el token no tiene permiso (avanzado).

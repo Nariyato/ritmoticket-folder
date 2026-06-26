@@ -3,5 +3,6 @@
   "java.configuration.updateBuildConfiguration": "interactive",
   "files.autoSave": "afterDelay",
   "editor.minimap.enabled": false,
-  "terminal.integrated.defaultProfile.windows": "Command Prompt"
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "editor.mouseWheelZoom": true
 }

@@ -26,5 +26,8 @@ public class LibroResponse extends RepresentationModel<LibroResponse> {
     private String editorial;
     private Integer anioPublicacion;
     private String autor;
-    private List<CategoriaResponse> categorias;
+
+    //[HATEOAS] Lista de categorías asociadas al libro
+    private List<CategoriaResponse> categorias; 
+
 }
