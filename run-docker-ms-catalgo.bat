@@ -3,45 +3,52 @@ setlocal
 cd /d "%~dp0"
 cls
 echo ====================================================
-echo    NUEVA INSTANCIA DE MS-CATALOGO EN DOCKER
+echo    INSTANCIA ADICIONAL DE MS-CATALOGO EN DOCKER
 echo ====================================================
 echo.
+echo   Agrega UNA instancia extra de ms-catalogo al cluster.
+echo   Puedes ejecutar este script varias veces; cada vez
+echo   levanta otra instancia en un puerto distinto.
+echo.
+echo   Requisito: stack base arriba (run-dockers.bat).
+echo   No uses "docker compose up ms-catalogo" para esto:
+echo   ese comando reemplaza la instancia principal (:9003).
+echo.
 
-rem Buscar un puerto libre entre 13300 y 13399
+rem Buscar puerto libre: sin contenedor ms-catalogo-PUERTO y puerto TCP disponible
 set PORT=
 for /L %%P in (13300,1,13399) do (
     if not defined PORT (
-        powershell -Command "try { $l = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Any, %%P); $l.Start(); $l.Stop(); Write-Output 'free' } catch { Write-Output 'used' }" | findstr /I "free" >nul 2>&1
-        if not errorlevel 1 set PORT=%%P
+        docker inspect ms-catalogo-%%P >nul 2>&1
+        if errorlevel 1 (
+            powershell -NoProfile -Command "try { $l = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Any, %%P); $l.Start(); $l.Stop(); exit 0 } catch { exit 1 }"
+            if not errorlevel 1 set PORT=%%P
+        )
     )
 )
 
 if not defined PORT (
-    echo ERROR: No se encontro ningun puerto libre entre 13300 y 13399.
+    echo ERROR: No hay puerto libre entre 13300 y 13399.
     pause
     exit /b 1
 )
 
-echo [1/3] Puerto seleccionado libre: %PORT%
+set CONTAINER_NAME=ms-catalogo-%PORT%
+echo [1/4] Nueva instancia: %CONTAINER_NAME%  ^|  Puerto: %PORT%
 echo.
 
-rem Compilar solo ms-catalogo (y sus dependencias como common)
-echo [2/3] Compilando ms-catalogo con Maven...
+echo [2/4] Compilando ms-catalogo con Maven...
 call mvn clean package -DskipTests -q -pl ms-catalogo -am
 if %ERRORLEVEL% NEQ 0 (
-    echo.
-    echo ****************************************************
     echo ERROR: La compilacion Maven de ms-catalogo fallo.
-    echo ****************************************************
     pause
     exit /b 1
 )
 echo       [OK] JAR generado.
 echo.
 
-rem Construir la imagen Docker de ms-catalogo via compose
-echo [3/3] Construyendo imagen Docker de ms-catalogo...
-docker compose build ms-catalogo
+echo [3/4] Reconstruyendo imagen Docker (sin cache, JAR recien compilado)...
+docker compose build --no-cache ms-catalogo
 if %ERRORLEVEL% NEQ 0 (
     echo.
     echo ****************************************************
@@ -51,48 +58,62 @@ if %ERRORLEVEL% NEQ 0 (
     pause
     exit /b 1
 )
-echo       [OK] Imagen construida.
+
+jar tf ms-catalogo\target\cl-triskeledu-catalogo-0.0.1-SNAPSHOT.jar | findstr /C:"EventoMapperImpl.class" >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo ERROR: El JAR no contiene EventoMapperImpl. Revisa la compilacion Maven/MapStruct.
+    pause
+    exit /b 1
+)
+echo       [OK] Imagen actualizada y JAR verificado.
 echo.
 
-rem Levantar la nueva instancia con el puerto dinamico
-set CONTAINER_NAME=ms-catalogo-%PORT%
-echo       Levantando contenedor %CONTAINER_NAME% en puerto %PORT%...
+echo [4/4] Levantando instancia en puerto %PORT%...
 docker run -d ^
     --name %CONTAINER_NAME% ^
     --network ritmoticket-network ^
     -e SPRING_PROFILES_ACTIVE=dev ^
     -e SERVER_PORT=%PORT% ^
-    -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-rdbms:5432/catalogo ^
+    -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/catalogo ^
     -e SPRING_DATASOURCE_USERNAME=postgres ^
     -e SPRING_DATASOURCE_PASSWORD=123 ^
-    -e SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka-broker:29092 ^
+    -e SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE=3 ^
+    -e SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE=1 ^
+    -e SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092 ^
     -e EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka ^
-    -e EUREKA_INSTANCE_PREFER_IP_ADDRESS=true ^
+    -e EUREKA_INSTANCE_HOSTNAME=%CONTAINER_NAME% ^
+    -e EUREKA_INSTANCE_PREFER_IP_ADDRESS=false ^
     -p %PORT%:%PORT% ^
     ritmoticket-ms-catalogo
 
 if %ERRORLEVEL% NEQ 0 (
+    echo ERROR: No se pudo levantar el contenedor.
     echo.
-    echo ****************************************************
-    echo ERROR: No se pudo levantar el contenedor Docker.
-    echo Asegurate de que Docker esta ejecutandose y la red existe.
-    echo Recuerda: el sistema base debe estar corriendo (run-dockers.bat)
-    echo ****************************************************
+    echo Si el nombre ya existe ^(instancia detenida^), eliminalo y reintenta:
+    echo   docker rm %CONTAINER_NAME%
+    echo.
+    echo Ver instancias existentes:
+    echo   docker ps -a --filter "name=ms-catalogo"
     pause
     exit /b 1
 )
 
 echo.
 echo ====================================================
-echo   INSTANCIA LEVANTADA CORRECTAMENTE
+echo   INSTANCIA ADICIONAL LEVANTADA
 echo ====================================================
-echo.
 echo   Contenedor : %CONTAINER_NAME%
 echo   Puerto     : http://localhost:%PORT%
-echo   Eureka     : se registrara automaticamente
+echo   Gateway    : http://localhost:9000/api/v1/eventos
+echo   Eureka     : http://localhost:8761
 echo.
-echo   Para detener esta instancia:
+echo   Ver instancias activas:
+echo   docker ps --filter "name=ms-catalogo"
+echo.
+echo   Detener esta instancia:
 echo   docker stop %CONTAINER_NAME% ^&^& docker rm %CONTAINER_NAME%
+echo.
+echo   Para otra instancia mas, ejecuta este script de nuevo.
 echo ====================================================
 endlocal
 pause

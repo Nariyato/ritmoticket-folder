@@ -22,6 +22,9 @@ x-ms-common-env: &ms-common-env
   SPRING_PROFILES_ACTIVE: dev
   SPRING_DATASOURCE_USERNAME: postgres
   SPRING_DATASOURCE_PASSWORD: "123"
+  # 10 MS x pool 10 (default) agotan max_connections=100 de PostgreSQL
+  SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "3"
+  SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "1"
   SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
   EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
   # En Docker los MS se descubren por nombre de servicio (Feign / lb://)
@@ -43,6 +46,7 @@ services:
   postgres:
     image: postgres
     container_name: postgres-rdbms
+    command: ["postgres", "-c", "max_connections=200"]
     ports:
       - "5433:5432"
     environment:

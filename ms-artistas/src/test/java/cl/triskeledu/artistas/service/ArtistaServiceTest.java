@@ -71,13 +71,13 @@ class ArtistaServiceTest {
             if (artista == null) {
                 return null;
             }
-            return ArtistaResponse.builder()
-                    .idArtista(artista.getIdArtista())
-                    .nombreArtistico(artista.getNombreArtistico())
-                    .pais(artista.getPais())
-                    .genero(artista.getGenero())
-                    .estado(artista.getEstado())
-                    .build();
+            ArtistaResponse response = new ArtistaResponse();
+            response.setIdArtista(artista.getIdArtista());
+            response.setNombreArtistico(artista.getNombreArtistico());
+            response.setPais(artista.getPais());
+            response.setGenero(artista.getGenero());
+            response.setEstado(artista.getEstado());
+            return response;
         });
 
         lenient().when(artistaMapper.toResponseList(anyList())).thenAnswer(invocation -> {
@@ -126,12 +126,12 @@ class ArtistaServiceTest {
      * Crea un ArtistaRequest con datos aleatorios.
      */
     private ArtistaRequest crearArtistaRequestSimulado() {
-        return ArtistaRequest.builder()
-                .nombreArtistico(faker.artist().name())
-                .pais("Chile")
-                .genero("Pop")
-                .estado("Activo")
-                .build();
+        ArtistaRequest request = new ArtistaRequest();
+        request.setNombreArtistico(faker.artist().name());
+        request.setPais("Chile");
+        request.setGenero("Pop");
+        request.setEstado("Activo");
+        return request;
     }
 
     /**
@@ -340,7 +340,10 @@ class ArtistaServiceTest {
     void deleteById_DeberiaLanzarReferentialIntegrityException_CuandoTieneAlbumesAsociados() {
         Integer id = 15;
         Artista artista = crearArtistaSimulado(id);
-        artista.getAlbums().add(Album.builder().idAlbum(1).titulo("Álbum Test").build());
+        Album albumAsociado = new Album();
+        albumAsociado.setIdAlbum(1);
+        albumAsociado.setTitulo("Álbum Test");
+        artista.getAlbums().add(albumAsociado);
 
         when(artistaRepository.findById(id)).thenReturn(Optional.of(artista));
 
@@ -375,11 +378,11 @@ class ArtistaServiceTest {
     void deleteById_DeberiaLanzarReferentialIntegrityException_CuandoTieneEventosProgramados() {
         Integer id = 15;
         Artista artista = crearArtistaSimulado(id);
-        artista.getEventos().add(EventoArtista.builder()
-                .idEvento(1)
-                .nombreEvento("Tour 2026")
-                .fecha(LocalDate.of(2026, 8, 1))
-                .build());
+        EventoArtista evento = new EventoArtista();
+        evento.setIdEvento(1);
+        evento.setNombreEvento("Tour 2026");
+        evento.setFecha(LocalDate.of(2026, 8, 1));
+        artista.getEventos().add(evento);
 
         when(artistaRepository.findById(id)).thenReturn(Optional.of(artista));
 
@@ -412,7 +415,9 @@ class ArtistaServiceTest {
         Integer albumId = 10;
 
         Artista artista = crearArtistaSimulado(artistaId);
-        Album album = Album.builder().idAlbum(albumId).titulo("Discografía").build();
+        Album album = new Album();
+        album.setIdAlbum(albumId);
+        album.setTitulo("Discografía");
 
         when(artistaRepository.findById(artistaId)).thenReturn(Optional.of(artista));
         when(albumRepository.findById(albumId)).thenReturn(Optional.of(album));

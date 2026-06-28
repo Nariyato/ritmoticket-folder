@@ -39,11 +39,27 @@ powershell -Command "while ((docker inspect --format '{{.State.Health.Status}}' 
 echo       [OK] PostgreSQL esta listo.
 echo.
 
-rem Paso 4: Compilar las bases de datos (SQL)
-echo [4/5] COMPILANDO BASES DE DATOS EN POSTGRES...
-cd init-multi-db
-call docker_compile_dbs.bat
-cd ..
+rem Paso 4: Esperar a que PostgreSQL termine la inicializacion automatica
+echo [4/5] ESPERANDO INICIALIZACION DE BASES DE DATOS...
+echo       Los scripts SQL se ejecutan solos al crear el volumen (sin relanzarlos).
+echo.
+powershell -NoProfile -Command ^
+  "$max = 90; " ^
+  "for ($i = 0; $i -lt $max; $i++) { " ^
+  "  $status = docker inspect --format '{{.State.Status}}' postgres-rdbms 2>$null; " ^
+  "  if ($status -ne 'running') { Start-Sleep -Seconds 2; continue }; " ^
+  "  $check = docker exec postgres-rdbms psql -U postgres -d artistas -tAc 'SELECT 1 FROM artistas LIMIT 1;' 2>$null; " ^
+  "  if ($LASTEXITCODE -eq 0 -and $check.Trim() -eq '1') { exit 0 }; " ^
+  "  Start-Sleep -Seconds 2 " ^
+  "}; " ^
+  "Write-Host 'ERROR: PostgreSQL no termino de cargar los datos de prueba a tiempo.'; " ^
+  "exit 1"
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo ERROR: La inicializacion de PostgreSQL no completo. Ver: docker logs postgres-rdbms
+    pause
+    exit /b 1
+)
 echo       [OK] Bases de datos creadas y cargadas con datos de prueba.
 echo.
 
@@ -53,7 +69,7 @@ echo.
 
 rem 1. Iniciar Eureka
 echo       Iniciando Eureka Server...
-docker compose up -d eureka-server
+docker compose up -d --build eureka-server
 echo       Esperando a que Eureka Server este saludable...
 powershell -Command "while ((docker inspect --format '{{.State.Health.Status}}' eureka-server 2>$null) -ne 'healthy') { Start-Sleep -Seconds 2 }"
 echo       [OK] Eureka Server esta activo y saludable.
@@ -61,18 +77,19 @@ echo.
 
 rem 2. Iniciar API Gateway
 echo       Iniciando API Gateway...
-docker compose up -d api-gateway
+docker compose up -d --build api-gateway
 echo       Esperando a que API Gateway este saludable...
 powershell -Command "while ((docker inspect --format '{{.State.Health.Status}}' api-gateway 2>$null) -ne 'healthy') { Start-Sleep -Seconds 2 }"
 echo       [OK] API Gateway esta activo y saludable.
 echo.
 
 rem 3. Iniciar Microservicios y Kafka UI
+echo       Reconstruyendo imagenes Docker con los JARs recien compilados...
 echo       Iniciando microservicios (ms-artistas, ms-boletos, ms-catalogo, ms-compras, ms-notificaciones, ms-pagos, ms-precios, ms-recintos, ms-reportes, ms-usuarios)...
-docker compose up -d ms-artistas ms-boletos ms-catalogo ms-compras ms-notificaciones ms-pagos ms-precios ms-recintos ms-reportes ms-usuarios kafka-ui
+docker compose up -d --build ms-artistas ms-boletos ms-catalogo ms-compras ms-notificaciones ms-pagos ms-precios ms-recintos ms-reportes ms-usuarios kafka-ui
 echo.
-echo       Esperando 15 segundos a que los microservicios se registren en Eureka...
-powershell -Command "Start-Sleep -Seconds 15"
+echo       Esperando 25 segundos a que los microservicios se registren en Eureka...
+powershell -Command "Start-Sleep -Seconds 25"
 echo       [OK] Microservicios listos.
 echo.
 

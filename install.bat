@@ -9,17 +9,19 @@ rmdir /s /q %USERPROFILE%\.m2
 
 REM Paso 2: Eliminar carpetas target de los proyectos
 echo Eliminando carpetas target ...
+rmdir /s /q C:\ritmoticket-folder\common\target
 rmdir /s /q C:\ritmoticket-folder\eureka\target
-rmdir /s /q C:\rimtoticket-folder\ms-artistas\target
-rmdir /s /q C:\rimtoticket-folder\ms-boletos\target
-rmdir /s /q C:\rimtoticket-folder\ms-catalogo\target
-rmdir /s /q C:\rimtoticket-folder\ms-compras\target
-rmdir /s /q C:\rimtoticket-folder\ms-notificaciones\target
-rmdir /s /q C:\rimtoticket-folder\ms-pagos\target
-rmdir /s /q C:\rimtoticket-folder\ms-precios\target
-rmdir /s /q C:\rimtoticket-folder\ms-recintos\target
-rmdir /s /q C:\rimtoticket-folder\ms-reportes\target
-rmdir /s /q C:\rimtoticket-folder\ms-usuarios\target
+rmdir /s /q C:\ritmoticket-folder\api-gateway\target
+rmdir /s /q C:\ritmoticket-folder\ms-artistas\target
+rmdir /s /q C:\ritmoticket-folder\ms-boletos\target
+rmdir /s /q C:\ritmoticket-folder\ms-catalogo\target
+rmdir /s /q C:\ritmoticket-folder\ms-compras\target
+rmdir /s /q C:\ritmoticket-folder\ms-notificaciones\target
+rmdir /s /q C:\ritmoticket-folder\ms-pagos\target
+rmdir /s /q C:\ritmoticket-folder\ms-precios\target
+rmdir /s /q C:\ritmoticket-folder\ms-recintos\target
+rmdir /s /q C:\ritmoticket-folder\ms-reportes\target
+rmdir /s /q C:\ritmoticket-folder\ms-usuarios\target
 
 
 REM Paso 3: Instalar todas las dependencias forzadamente
